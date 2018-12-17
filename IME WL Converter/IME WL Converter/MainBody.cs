@@ -208,7 +208,7 @@ namespace Studyzy.IMEWLConverter
             currentStatus = 0;
             foreach (WordLibrary wordLibrary in wordLibraryList)
             {
-                if (wordLibrary.Rank == 0)
+                if (wordLibrary.Rank == 0|| wordRankGenerater.ForceUse )
                 {
                     wordLibrary.Rank = wordRankGenerater.GetRank(wordLibrary.Word);
                 }
@@ -219,6 +219,10 @@ namespace Studyzy.IMEWLConverter
 
         private void GenerateDestinationCode(WordLibraryList wordLibraryList, CodeType codeType)
         {
+            if(wordLibraryList[0].CodeType== CodeType.NoCode&& codeType == CodeType.UserDefinePhrase)
+            {
+                codeType = CodeType.Pinyin;
+            }
             IWordCodeGenerater generater = CodeTypeHelper.GetGenerater(codeType);
             if (generater == null) //未知编码方式，则不进行编码。
                 return;
