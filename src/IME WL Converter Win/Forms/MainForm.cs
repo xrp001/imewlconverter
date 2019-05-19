@@ -176,9 +176,27 @@ namespace Studyzy.IMEWLConverter
                 }
             }
         }
+        private bool CheckCanRun()
+        {
+            if(import==null || export==null)
+            {
+                MessageBox.Show("请先选择导入词库类型和导出词库类型");
+                return false;
+            }
+            if(this.txbWLPath.Text=="")
+            {
+                MessageBox.Show("请先选择源词库文件");
+                return false;
+            }
+            return true;
+        }
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
+            if (!CheckCanRun())
+            {
+                return;
+            }
             richTextBox1.Clear();
 
             try
@@ -211,7 +229,9 @@ namespace Studyzy.IMEWLConverter
                 mainBody.BatchFilters = GetBatchFilters();
                 mainBody.ReplaceFilters = GetReplaceFilters();
                 
-                mainBody.ProcessNotice+=new ProcessNotice((string notice) => { richTextBox1.AppendText(notice);});
+                mainBody.ProcessNotice+=new ProcessNotice((string notice) => {
+                    richTextBox1.Invoke(new Action(() => richTextBox1.AppendText(notice + "\r\n")));
+                });
                 timer1.Enabled = true;
                 backgroundWorker1.RunWorkerAsync();
             }
@@ -499,7 +519,16 @@ namespace Studyzy.IMEWLConverter
             {
                 if (!streamExport)
                 {
-                    fileContent = mainBody.Convert(files);
+                    try
+                    {
+                        fileContent = mainBody.Convert(files);
+                    }
+                    catch(Exception ex)
+                    {
+                        mainBody.Dispose();
+                        this.richTextBox1.AppendText(ex.Message);
+                        throw ex;
+                    }
                 }
             }
             else
@@ -538,7 +567,7 @@ namespace Studyzy.IMEWLConverter
                 richTextBox1.Text = fileContent;
                 //btnExport.Enabled = true;
             }
-            if (!mergeTo1File ||  export is Win10MsPinyin)//微软拼音是二进制文件，不需要再提示保存
+            if (!mergeTo1File ||  export is Win10MsPinyin || export is Win10MsWubi)//微软拼音是二进制文件，不需要再提示保存
             {
                 MessageBox.Show("转换完成!");
                 return;
