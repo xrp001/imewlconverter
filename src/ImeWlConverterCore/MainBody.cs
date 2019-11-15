@@ -30,6 +30,7 @@ namespace Studyzy.IMEWLConverter
         private IWordRankGenerater wordRankGenerater;
         private Timer timer;
 
+
         public IList<string> ExportContents { get; set; } 
         public MainBody()
         {
@@ -157,7 +158,14 @@ namespace Studyzy.IMEWLConverter
 
         public IList<IBatchFilter> BatchFilters { get; set; }
 
-
+        public void StopNotice()
+        {
+            this.timer.Stop();
+        }
+        public void StartNotice()
+        {
+            this.timer.Start();
+        }
         //public List<string> GetRealPath(IList<string> filePathes)
         //{
         //    var list = new List<string>();
@@ -226,7 +234,9 @@ namespace Studyzy.IMEWLConverter
             {
                 allWlList = RemoveEmptyCodeData(allWlList);
             }
-            ExportContents = export.Export(allWlList);
+
+            ReplaceAfterCode(allWlList);
+             ExportContents = export.Export(allWlList);
             this.timer.Stop();
             return string.Join("\r\n", ExportContents.ToArray());
         }
@@ -262,6 +272,7 @@ namespace Studyzy.IMEWLConverter
 
         private void GenerateDestinationCode(WordLibraryList wordLibraryList, CodeType codeType)
         {
+            if (wordLibraryList.Count == 0) return;
             if(wordLibraryList[0].CodeType== CodeType.NoCode&& codeType == CodeType.UserDefinePhrase)
             {
                 codeType = CodeType.Pinyin;
@@ -277,6 +288,11 @@ namespace Studyzy.IMEWLConverter
                 processMessage = "生成目标编码：" + currentStatus + "/" + countWord;
                 if (wordLibrary.CodeType == codeType)
                 {
+                    continue;
+                }
+                if (wordLibrary.CodeType == CodeType.English)
+                {
+                    wordLibrary.SetCode(CodeType.English, wordLibrary.Word.ToLower());
                     continue;
                 }
                 try
@@ -320,7 +336,9 @@ namespace Studyzy.IMEWLConverter
                     }
                     c += wlList.Count;
                     GenerateWordRank(wlList);
-                    ExportContents = export.Export(RemoveEmptyCodeData(wlList));
+                    wlList= RemoveEmptyCodeData(wlList);
+                    ReplaceAfterCode(wlList);
+                    ExportContents = export.Export(wlList);
                     for (var i = 0; i < ExportContents.Count; i++)
                     {
                         string exportPath = outputDir + (outputDir.EndsWith("\\") ? "" : "\\") +
@@ -368,7 +386,18 @@ namespace Studyzy.IMEWLConverter
 
             stream.Close();
         }
-
+        private void ReplaceAfterCode(WordLibraryList list)
+        {
+            foreach (WordLibrary wordLibrary in list)
+            {
+                if (ReplaceFilters != null)
+                    foreach (IReplaceFilter replaceFilter in ReplaceFilters)
+                    {
+                        if (replaceFilter.ReplaceAfterCode)
+                            replaceFilter.Replace(wordLibrary);
+                    }
+            }
+        }
         private WordLibraryList Filter(WordLibraryList list)
         {
             var result = new WordLibraryList();
@@ -379,7 +408,8 @@ namespace Studyzy.IMEWLConverter
                     if (ReplaceFilters != null)
                         foreach (IReplaceFilter replaceFilter in ReplaceFilters)
                         {
-                            replaceFilter.Replace(wordLibrary);
+                            if (!replaceFilter.ReplaceAfterCode)
+                                replaceFilter.Replace(wordLibrary);
                         }
                     if (wordLibrary.Word != string.Empty)
                         result.Add(wordLibrary);

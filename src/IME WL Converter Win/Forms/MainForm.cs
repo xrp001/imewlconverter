@@ -229,9 +229,7 @@ namespace Studyzy.IMEWLConverter
                 mainBody.BatchFilters = GetBatchFilters();
                 mainBody.ReplaceFilters = GetReplaceFilters();
                 
-                mainBody.ProcessNotice+=new ProcessNotice((string notice) => {
-                    richTextBox1.Invoke(new Action(() => richTextBox1.AppendText(notice + "\r\n")));
-                });
+                mainBody.ProcessNotice+=new ProcessNotice((string notice) => {  RichTextBoxShow(notice); });
                 timer1.Enabled = true;
                 backgroundWorker1.RunWorkerAsync();
             }
@@ -275,6 +273,10 @@ namespace Studyzy.IMEWLConverter
             if (filterConfig.ReplaceNumber)
             {
                 filters.Add(new NumberFilter());
+            }
+            if(cbxFrom.Text== ConstantString.EMOJI)
+            {
+                filters.Add(new EmojiReplacer(txbWLPath.Text));
             }
             return filters;
         }
@@ -498,7 +500,7 @@ namespace Studyzy.IMEWLConverter
                 }
                 catch (Exception ex)
                 {
-                    
+                    Debug.WriteLine(ex.Message);
                 }
             }
         }
@@ -526,7 +528,7 @@ namespace Studyzy.IMEWLConverter
                     catch(Exception ex)
                     {
                         mainBody.Dispose();
-                        this.richTextBox1.AppendText(ex.Message);
+                        RichTextBoxShow(ex.Message);
                         throw ex;
                     }
                 }
@@ -537,11 +539,22 @@ namespace Studyzy.IMEWLConverter
             }
             timer1.Enabled = false;
         }
-
+        private void RichTextBoxShow(string msg)
+        {
+            if (richTextBox1.InvokeRequired)
+            {
+                richTextBox1.Invoke(new Action(() => richTextBox1.AppendText(msg + "\r\n")));
+            }
+            else
+            {
+                richTextBox1.AppendText(msg + "\r\n");
+            }
+        }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             timer1.Enabled = false;
+            mainBody.StopNotice();
             toolStripProgressBar1.Value = toolStripProgressBar1.Maximum;
             ShowStatusMessage("转换完成", false);
             if (e.Error != null)
@@ -549,7 +562,7 @@ namespace Studyzy.IMEWLConverter
                 MessageBox.Show("不好意思，发生了错误：" + e.Error.Message);
                 if (e.Error.InnerException != null)
                 {
-                    richTextBox1.Text = (e.Error.InnerException.ToString());
+                    RichTextBoxShow(e.Error.InnerException.ToString());
                 }
                 return;
             }

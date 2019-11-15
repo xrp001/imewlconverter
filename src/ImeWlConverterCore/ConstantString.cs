@@ -24,6 +24,7 @@ namespace Studyzy.IMEWLConverter
         public const string QQ_PINYIN = "QQ拼音";
         public const string LIBPINYIN = "libpinyin";
         public const string QQ_PINYIN_QPYD = "QQ分类词库qpyd";
+        public const string QQ_PINYIN_QCEL = "QQ分类词库qcel";
         public const string GOOGLE_PINYIN = "谷歌拼音";
         public const string YAHOO_KEYKEY = "雅虎奇摩";
         public const string ZIGUANG_PINYIN = "华宇紫光拼音";
@@ -51,6 +52,7 @@ namespace Studyzy.IMEWLConverter
         public const string SHOUXIN_PINYIN = "手心输入法";
 		public const string CHAO_YIN="超音速录";
         public const string CHINESE_PYIM = "Chinese-pyim";
+        public const string EMOJI = "Emoji";
         //简码，控制台用
         public const string BAIDU_SHOUJI_C = "bdsj";
         public const string BAIDU_SHOUJI_ENG_C = "bdsje";
@@ -65,6 +67,7 @@ namespace Studyzy.IMEWLConverter
         public const string WUBI98_C = "wb98";
         public const string QQ_PINYIN_C = "qqpy";
         public const string QQ_PINYIN_QPYD_C = "qpyd";
+        public const string QQ_PINYIN_QCEL_C = "qcel";
         public const string GOOGLE_PINYIN_C = "ggpy";
         public const string ZIGUANG_PINYIN_C = "zgpy";
         public const string ZIGUANG_PINYIN_UWL_C = "uwl";
@@ -95,5 +98,6 @@ namespace Studyzy.IMEWLConverter
         public const string SHOUXIN_PINYIN_C = "sxpy";
 		public const string CHAO_YIN_C="cysl";
         public const string CHINESE_PYIM_C = "pyim";
+        public const string EMOJI_C = "emoji";
     }
 }

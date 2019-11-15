@@ -5,6 +5,7 @@
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>ImeWlConverterCore</AssemblyName>
     <RootNamespace>ImeWlConverterCore</RootNamespace>
+    <Version>2.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,7 @@
     <None Remove="Resources\ChineseCode.txt" />
     <None Remove="Resources\Erbi.txt" />
     <None Remove="Resources\WordPinyin.txt" />
+    <None Remove="Resources\XiaoheShuangpin.txt" />
     <None Remove="Resources\Zhengma.txt" />
     <None Remove="Resources\Zhuyin.txt" />
   </ItemGroup>
@@ -22,6 +24,7 @@
     <EmbeddedResource Include="Resources\ChineseCode.txt" />
     <EmbeddedResource Include="Resources\Erbi.txt" />
     <EmbeddedResource Include="Resources\WordPinyin.txt" />
+    <EmbeddedResource Include="Resources\XiaoheShuangpin.txt" />
     <EmbeddedResource Include="Resources\Zhengma.txt" />
     <EmbeddedResource Include="Resources\Zhuyin.txt" />
   </ItemGroup>

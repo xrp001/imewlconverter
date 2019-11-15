@@ -3,38 +3,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using Studyzy.IMEWLConverter.Entities;
 using Studyzy.IMEWLConverter.Helpers;
 
 namespace Studyzy.IMEWLConverter.IME
 {
-    /// <summary>
-    ///     搜狗细胞词库
-    /// </summary>
-    [ComboBoxShow(ConstantString.SOUGOU_XIBAO_SCEL, ConstantString.SOUGOU_XIBAO_SCEL_C, 20)]
-    public class SougouPinyinScel : BaseImport, IWordLibraryImport
+    [ComboBoxShow(ConstantString.QQ_PINYIN_QCEL, ConstantString.QQ_PINYIN_QCEL_C, 60)]
+    public class QQPinyinQcel : BaseImport, IWordLibraryImport
     {
         #region IWordLibraryImport 成员
 
         //public bool OnlySinglePinyin { get; set; }
 
         public WordLibraryList Import(string path)
-        {
-            //var str = ReadScel(path);
-            //var wlList = new WordLibraryList();
-            //string[] lines = str.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
-            //CountWord = lines.Length;
-            //for (int i = 0; i < lines.Length; i++)
-            //{
-            //    CurrentStatus = i;
-            //    string line = lines[i];
-            //    if (line.IndexOf("'") == 0)
-            //    {
-            //        wlList.AddWordLibraryList(ImportLine(line));
-            //    }
-            //}
-            //return wlList;
-            return ReadScel(path);
+        {           
+            return ReadQcel(path);
         }
 
         #endregion
@@ -52,10 +36,10 @@ namespace Studyzy.IMEWLConverter.IME
 
         public WordLibraryList ImportLine(string line)
         {
-            throw new Exception("Scel格式是二进制文件，不支持流转换");
+            throw new Exception("Qcel格式是二进制文件，不支持流转换");
         }
 
-        private WordLibraryList ReadScel(string path)
+        private WordLibraryList ReadQcel(string path)
         {
             pyDic = new Dictionary<int, string>();
             //Dictionary<string, string> pyAndWord = new Dictionary<string, string>();
@@ -110,11 +94,11 @@ namespace Studyzy.IMEWLConverter.IME
             {
                 num = new byte[4];
                 fs.Read(num, 0, 4);
-                int mark = num[0] + num[1]*256;
-                str = new byte[128];
+                int mark = num[0] + num[1] * 256;
+                str = new byte[num[2]];
                 fs.Read(str, 0, (num[2]));
                 string py = Encoding.Unicode.GetString(str);
-                py = py.Substring(0, py.IndexOf('\0'));
+                //py = py.Substring(0, py.IndexOf('\0'));
                 pyDic.Add(mark, py);
                 if (py == "zuo") //最后一个拼音
                 {
@@ -129,8 +113,8 @@ namespace Studyzy.IMEWLConverter.IME
             Debug.WriteLine(s.ToString());
 
 
-            //fs.Position = 0x2628;
-            fs.Position = hzPosition;
+            fs.Position = 0x2628;
+            //fs.Position = hzPosition;
 
             while (true)
             {
@@ -161,18 +145,18 @@ namespace Studyzy.IMEWLConverter.IME
         {
             var num = new byte[4];
             fs.Read(num, 0, 4);
-            int samePYcount = num[0] + num[1]*256;
-            int count = num[2] + num[3]*256;
+            int samePYcount = num[0] + num[1] * 256;
+            int pinyinLen = num[2] + num[3] * 256;
             //接下来读拼音
             var str = new byte[256];
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < pinyinLen; i++)
             {
-                str[i] = (byte) fs.ReadByte();
+                str[i] = (byte)fs.ReadByte();
             }
             var wordPY = new List<string>();
-            for (int i = 0; i < count/2; i++)
+            for (int i = 0; i < pinyinLen / 2; i++)
             {
-                int key = str[i*2] + str[i*2 + 1]*256;
+                int key = str[i * 2] + str[i * 2 + 1] * 256;
                 wordPY.Add(pyDic[key]);
             }
             //wordPY = wordPY.Remove(wordPY.Length - 1); //移除最后一个单引号
@@ -182,19 +166,19 @@ namespace Studyzy.IMEWLConverter.IME
             {
                 num = new byte[2];
                 fs.Read(num, 0, 2);
-                int hzBytecount = num[0] + num[1]*256;
+                int hzBytecount = num[0] + num[1] * 256;
                 str = new byte[hzBytecount];
                 fs.Read(str, 0, hzBytecount);
                 string word = Encoding.Unicode.GetString(str);
                 short unknown1 = BinFileHelper.ReadInt16(fs); //全部是10,肯定不是词频，具体是什么不知道
                 int unknown2 = BinFileHelper.ReadInt32(fs); //每个字对应的数字不一样，不知道是不是词频
-                pyAndWord.Add(new WordLibrary {Word = word, PinYin = wordPY.ToArray(), Rank = DefaultRank});
+                pyAndWord.Add(new WordLibrary { Word = word, PinYin = wordPY.ToArray(), Rank = DefaultRank });
                 CurrentStatus++;
                 //接下来10个字节什么意思呢？暂时先忽略了
                 var temp = new byte[6];
                 for (int i = 0; i < 6; i++)
                 {
-                    temp[i] = (byte) fs.ReadByte();
+                    temp[i] = (byte)fs.ReadByte();
                 }
             }
             return pyAndWord;
