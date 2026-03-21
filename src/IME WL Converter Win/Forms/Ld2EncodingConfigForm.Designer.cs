@@ -1,4 +1,21 @@
-﻿namespace Studyzy.IMEWLConverter
+﻿/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+namespace Studyzy.IMEWLConverter
 {
     partial class Ld2EncodingConfigForm
     {
@@ -67,9 +84,9 @@
             this.cbxEncoding.FormattingEnabled = true;
             this.cbxEncoding.Location = new System.Drawing.Point(128, 12);
             this.cbxEncoding.Name = "cbxEncoding";
-            this.cbxEncoding.SelectedEncoding = ((System.Text.Encoding)(resources.GetObject("cbxEncoding.SelectedEncoding")));
             this.cbxEncoding.Size = new System.Drawing.Size(121, 20);
             this.cbxEncoding.TabIndex = 4;
+            this.cbxEncoding.SelectedIndex = 1; // UTF-8
             // 
             // Ld2EncodingConfigForm
             // 

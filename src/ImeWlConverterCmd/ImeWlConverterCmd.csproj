@@ -1,22 +1,55 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>2.5.0</Version>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ImeWlConverterCore\ImeWlConverterCore.csproj">
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Program.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Readme.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <!-- Version 由 MinVer 自动从 Git tag 生成，见 Directory.Build.props -->
+        <!-- 默认版本号后备值，确保在MinVer失效时显示有意义的版本 -->
+        <Version Condition="'$(Version)' == ''">3.3.1</Version>
+        <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">3.3.1.0</AssemblyVersion>
+        <FileVersion Condition="'$(FileVersion)' == ''">3.3.1.0</FileVersion>
+        <Trimming>full</Trimming>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <!-- 发布优化配置 -->
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        
+        <!-- 启用代码裁剪 -->
+        <PublishTrimmed>true</PublishTrimmed>
+        
+        <!-- 单文件发布 -->
+        <PublishSingleFile>true</PublishSingleFile>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        
+        <!-- 启用ReadyToRun优化 -->
+        <PublishReadyToRun>true</PublishReadyToRun>
+        
+        <!-- 不包含PDB文件 -->
+        <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="UTF.Unknown" Version="2.5.1"/>
+        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ImeWlConverterCore\ImeWlConverterCore.csproj">
+        </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Program.cs">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="Readme.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>

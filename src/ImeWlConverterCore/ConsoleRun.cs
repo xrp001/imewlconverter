@@ -1,7 +1,24 @@
-﻿using System;
+/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 using Studyzy.IMEWLConverter.Entities;
@@ -10,377 +27,395 @@ using Studyzy.IMEWLConverter.Generaters;
 using Studyzy.IMEWLConverter.Helpers;
 using Studyzy.IMEWLConverter.IME;
 
-namespace Studyzy.IMEWLConverter
+namespace Studyzy.IMEWLConverter;
+
+/// <summary>
+/// 控制台运行业务协调器 - 负责转换流程的协调，不再处理参数解析
+/// </summary>
+public class ConsoleRun
 {
-    public delegate void ShowHelp(List<ComboBoxShowAttribute> cbxImportItems);
-    public class ConsoleRun
+    private readonly List<ComboBoxShowAttribute> cbxExportItems = new();
+    private readonly List<ComboBoxShowAttribute> cbxImportItems = new();
+
+    private readonly IDictionary<string, IWordLibraryExport> exports =
+        new Dictionary<string, IWordLibraryExport>();
+
+    private readonly IDictionary<string, IWordLibraryImport> imports =
+        new Dictionary<string, IWordLibraryImport>();
+
+    [RequiresUnreferencedCode("Calls LoadImeList()")]
+    public ConsoleRun()
     {
-        private readonly List<ComboBoxShowAttribute> cbxExportItems = new List<ComboBoxShowAttribute>();
-        private readonly List<ComboBoxShowAttribute> cbxImportItems = new List<ComboBoxShowAttribute>();
-        private readonly IDictionary<string, IWordLibraryExport> exports = new Dictionary<string, IWordLibraryExport>();
-        private readonly List<string> importPaths = new List<string>();
-        private readonly IDictionary<string, IWordLibraryImport> imports = new Dictionary<string, IWordLibraryImport>();
-        private readonly ParsePattern pattern = new ParsePattern();
-        private bool beginImportFile;
-        private string codingFile;
-        private string exportPath = "";
-        private string format;
-        private CommandType type = CommandType.Null;
-        private Encoding wordEncoding = Encoding.UTF8;
-        private IWordLibraryExport wordLibraryExport;
-        private IWordLibraryImport wordLibraryImport;
-        private Encoding xmlEncoding;
-        private ShowHelp showHelp;
-        private IWordRankGenerater wordRankGenerater= new DefaultWordRankGenerater();
-        private IList<ISingleFilter> filters = new List<ISingleFilter>();
+        LoadImeList();
+    }
 
-        public ConsoleRun(string[] args,ShowHelp showHelp)
+    /// <summary>
+    /// 执行转换 - 新的入口点，接受解析后的命令行选项
+    /// </summary>
+    public void Execute(CommandLineOptions options)
+    {
+        // 验证选项
+        ValidateOptions(options);
+
+        // 获取 Import 和 Export 接口
+        var wordLibraryImport = GetImportInterface(options.InputFormat);
+        var wordLibraryExport = GetExportInterface(options.OutputFormat);
+
+        // 创建解析模式对象
+        var pattern = new ParsePattern
         {
-            Args = args;
-            this.showHelp = showHelp;
-            pattern.ContainCode = true;
-            pattern.SplitString = " ";
-            pattern.CodeSplitString = ",";
-            pattern.CodeSplitType = BuildType.None;
-            pattern.Sort = new List<int> {2, 1, 3};
+            ContainCode = true,
+            SplitString = " ",
+            CodeSplitString = ",",
+            CodeSplitType = BuildType.None,
+            Sort = new List<int> { 2, 1, 3 },
+            ContainRank = false
+        };
+
+        // 配置自定义格式
+        if (!string.IsNullOrEmpty(options.CustomFormat))
+        {
+            ConfigureCustomFormat(options.CustomFormat, pattern);
+        }
+
+        // 配置编码文件
+        if (!string.IsNullOrEmpty(options.CodeFile))
+        {
+            pattern.MappingTablePath = options.CodeFile;
+            pattern.IsPinyinFormat = false;
+            pattern.CodeType = CodeType.UserDefine;
+        }
+
+        // 配置编码类型
+        if (!string.IsNullOrEmpty(options.CodeType))
+        {
+            ConfigureCodeType(options.CodeType, pattern);
+        }
+
+        // 配置目标操作系统
+        if (!string.IsNullOrEmpty(options.TargetOS))
+        {
+            ConfigureTargetOS(options.TargetOS, pattern);
+        }
+
+        // 配置多字词编码规则
+        if (!string.IsNullOrEmpty(options.MultiCode))
+        {
+            pattern.MutiWordCodeFormat = options.MultiCode.Replace(",", "\n");
+        }
+
+        // 应用模式到 Import/Export
+        if (wordLibraryImport is SelfDefining selfDefImport)
+        {
+            selfDefImport.UserDefiningPattern = pattern;
+        }
+
+        if (wordLibraryExport is SelfDefining selfDefExport)
+        {
+            selfDefExport.UserDefiningPattern = pattern;
+        }
+
+        if (wordLibraryExport is Rime rimeExport)
+        {
+            rimeExport.CodeType = pattern.CodeType;
+            rimeExport.OS = pattern.OS;
+        }
+
+        // 配置 Lingoes ld2 编码
+        if (wordLibraryImport is LingoesLd2 ld2Import && !string.IsNullOrEmpty(options.Ld2Encoding))
+        {
+            ConfigureLd2Encoding(options.Ld2Encoding, ld2Import);
+        }
+
+        // 配置过滤器
+        var filters = new List<ISingleFilter>();
+        if (!string.IsNullOrEmpty(options.Filter))
+        {
+            ConfigureFilters(options.Filter, filters);
+        }
+
+        // 配置词频生成器
+        IWordRankGenerater wordRankGenerater = new DefaultWordRankGenerater();
+        if (!string.IsNullOrEmpty(options.RankGenerator))
+        {
+            wordRankGenerater = ConfigureRankGenerator(options.RankGenerator);
+        }
+
+        // 执行转换
+        PerformConversion(
+            options.InputFiles,
+            options.OutputPath,
+            wordLibraryImport,
+            wordLibraryExport,
+            filters,
+            wordRankGenerater
+        );
+    }
+
+    private void ValidateOptions(CommandLineOptions options)
+    {
+        // 验证输入格式是否有效
+        if (!imports.ContainsKey(options.InputFormat))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"错误: 未知的输入格式 '{options.InputFormat}'");
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.WriteLine("支持的输入格式:");
+            foreach (var item in cbxImportItems)
+            {
+                Console.WriteLine($"  {item.ShortCode,-10} - {item.Name}");
+            }
+            throw new ArgumentException($"未知的输入格式: {options.InputFormat}");
+        }
+
+        // 验证输出格式是否有效
+        if (!exports.ContainsKey(options.OutputFormat))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"错误: 未知的输出格式 '{options.OutputFormat}'");
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.WriteLine("支持的输出格式:");
+            foreach (var item in cbxExportItems)
+            {
+                Console.WriteLine($"  {item.ShortCode,-10} - {item.Name}");
+            }
+            throw new ArgumentException($"未知的输出格式: {options.OutputFormat}");
+        }
+
+        // 验证自定义格式的选项组合
+        if (options.OutputFormat == "self" && string.IsNullOrEmpty(options.CustomFormat))
+        {
+            Console.WriteLine("警告: 输出为自定义格式 (self) 但未指定 --custom-format，将使用默认格式");
+        }
+    }
+
+    private void ConfigureCustomFormat(string format, ParsePattern pattern)
+    {
+        if (format.Length < 9)
+        {
+            throw new ArgumentException($"自定义格式参数不正确。当前格式: '{format}'，至少需要9个字符，格式示例: '213, ,nyyy'");
+        }
+
+        var sort = new List<int>();
+        for (var i = 0; i < 3; i++)
+        {
+            sort.Add(format[i] - '0');
+        }
+
+        pattern.Sort = sort;
+        pattern.CodeSplitString = format[3].ToString();
+        pattern.SplitString = format[4].ToString();
+
+        var t = format[5].ToString().ToLower();
+        pattern.CodeSplitType = t switch
+        {
+            "l" => BuildType.LeftContain,
+            "r" => BuildType.RightContain,
+            "b" => BuildType.FullContain,
+            "n" => BuildType.None,
+            _ => BuildType.None
+        };
+
+        pattern.ContainCode = format[6].ToString().ToLower() == "y";
+
+        if (format.Length > 8)
+        {
+            pattern.ContainRank = format[8].ToString().ToLower() == "y";
+        }
+        else
+        {
             pattern.ContainRank = false;
-            LoadImeList();
+        }
+    }
+
+    private void ConfigureFilters(string filterString, IList<ISingleFilter> filters)
+    {
+        var lenRegex = new Regex(@"len:(\d+)-(\d+)");
+        var rankRegex = new Regex(@"rank:(\d+)-(\d+)");
+        var rmRegex = new Regex(@"rm:(\w+)");
+
+        foreach (var filterStr in filterString.Split('|'))
+        {
+            if (lenRegex.IsMatch(filterStr))
+            {
+                var match = lenRegex.Match(filterStr);
+                var from = Convert.ToInt32(match.Groups[1].Value);
+                var to = Convert.ToInt32(match.Groups[2].Value);
+                filters.Add(new LengthFilter { MinLength = from, MaxLength = to });
+            }
+            else if (rankRegex.IsMatch(filterStr))
+            {
+                var match = rankRegex.Match(filterStr);
+                var from = Convert.ToInt32(match.Groups[1].Value);
+                var to = Convert.ToInt32(match.Groups[2].Value);
+                filters.Add(new RankFilter { MinLength = from, MaxLength = to });
+            }
+            else if (rmRegex.IsMatch(filterStr))
+            {
+                var match = rmRegex.Match(filterStr);
+                var rmType = match.Groups[1].Value;
+                ISingleFilter filter = rmType switch
+                {
+                    "eng" => new EnglishFilter(),
+                    "num" => new NumberFilter(),
+                    "space" => new SpaceFilter(),
+                    "pun" => new EnglishPunctuationFilter(),
+                    _ => throw new ArgumentException($"不支持的过滤器类型: {rmType}")
+                };
+                filters.Add(filter);
+            }
+        }
+    }
+
+    private void ConfigureCodeType(string codeType, ParsePattern pattern)
+    {
+        pattern.CodeType = codeType.ToLower() switch
+        {
+            "pinyin" => CodeType.Pinyin,
+            "wubi" => CodeType.Wubi,
+            "zhengma" => CodeType.Zhengma,
+            "cangjie" => CodeType.Cangjie,
+            "zhuyin" => CodeType.TerraPinyin,
+            _ => CodeType.Pinyin
+        };
+    }
+
+    private void ConfigureTargetOS(string os, ParsePattern pattern)
+    {
+        pattern.OS = os.ToLower() switch
+        {
+            "windows" => OperationSystem.Windows,
+            "mac" or "macos" => OperationSystem.MacOS,
+            "linux" or "unix" => OperationSystem.Linux,
+            _ => OperationSystem.Windows
+        };
+    }
+
+    private IWordRankGenerater ConfigureRankGenerator(string rankType)
+    {
+        return rankType.ToLower() switch
+        {
+            "baidu" => new BaiduWordRankGenerater(),
+            "google" => new GoogleWordRankGenerater(),
+            _ => new DefaultWordRankGenerater
+            {
+                ForceUse = true,
+                Rank = Convert.ToInt32(rankType)
+            }
+        };
+    }
+
+    private void ConfigureLd2Encoding(string encodingString, LingoesLd2 ld2Import)
+    {
+        var arr = encodingString.Split(',');
+        ld2Import.WordEncoding = Encoding.GetEncoding(arr[0]);
+        if (arr.Length > 1)
+        {
+            ld2Import.XmlEncoding = Encoding.GetEncoding(arr[1]);
+            ld2Import.IncludeMeaning = true;
+        }
+    }
+
+    private void PerformConversion(
+        List<string> inputFiles,
+        string outputPath,
+        IWordLibraryImport import,
+        IWordLibraryExport export,
+        IList<ISingleFilter> filters,
+        IWordRankGenerater wordRankGenerater)
+    {
+        var mainBody = new MainBody
+        {
+            Export = export,
+            Import = import,
+            SelectedWordRankGenerater = wordRankGenerater,
+            Filters = filters
+        };
+
+        mainBody.ProcessNotice += MainBody_ProcessNotice;
+
+        Console.WriteLine("转换开始...");
+
+        // 批量输出模式（输出路径以 / 结尾或为目录）
+        if (outputPath.EndsWith("/") || outputPath.EndsWith("\\"))
+        {
+            mainBody.Convert(inputFiles, outputPath);
+        }
+        else
+        {
+            // 单文件输出模式
+            var str = mainBody.Convert(inputFiles);
+            FileOperationHelper.WriteFile(outputPath, export.Encoding, str);
         }
 
-        public string[] Args { get; set; }
+        Console.WriteLine($"转换完成，共转换 {mainBody.Count} 个词条");
+    }
 
-        public void Run()
+    private void MainBody_ProcessNotice(string message)
+    {
+        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "\t" + message);
+    }
+
+    [RequiresUnreferencedCode("Calls System.Reflection.Assembly.GetTypes()")]
+    private void LoadImeList()
+    {
+        var assembly = GetType().Assembly;
+        var types = assembly.GetTypes();
+
+        foreach (var type in types)
         {
-            if (Args.Length == 0)
+            if (type.Namespace != null && type.Namespace.StartsWith("Studyzy.IMEWLConverter.IME"))
             {
-                Console.WriteLine("输入 -? 可获取帮助");
-                return;
-            }
-            for (int i = 0; i < Args.Length; i++)
-            {
-                string arg = Args[i];
-                type = RunCommand(arg);
-            }
-            if (!string.IsNullOrEmpty(format))
-            {
-                if ((!(wordLibraryExport is SelfDefining)) && (!(wordLibraryImport is SelfDefining)))
+                var attributes = type.GetCustomAttributes(typeof(ComboBoxShowAttribute), false);
+                if (attributes.Length > 0)
                 {
-                    Console.WriteLine("-f参数用于自定义格式时设置格式样式用，导入导出词库格式均不是自定义格式，该参数无效！");
-                    return;
-                }
-            }
-            if (!string.IsNullOrEmpty(codingFile))
-            {
-                if (!(wordLibraryExport is SelfDefining))
-                {
-                    Console.WriteLine("-f参数用于自定义格式输出时设置编码用，导出词库格式不是自定义格式，该参数无效！");
-                    return;
-                }
-            }
-            if (wordLibraryImport is SelfDefining)
-            {
-                ((SelfDefining) wordLibraryImport).UserDefiningPattern = pattern;
-            }
-            if (wordLibraryExport is SelfDefining)
-            {
-                ((SelfDefining) wordLibraryExport).UserDefiningPattern = pattern;
-            }
-            if (wordLibraryExport is Rime)
-            {
-                ((Rime)wordLibraryExport).CodeType = pattern.CodeType;
-                ((Rime)wordLibraryExport).OS = pattern.OS;
-            }
-            if (wordLibraryImport is LingoesLd2)
-            {
-                var ld2Import = ((LingoesLd2) wordLibraryImport);
-                ld2Import.WordEncoding = wordEncoding;
-                if (xmlEncoding != null)
-                {
-                    ld2Import.XmlEncoding = xmlEncoding;
-                    ld2Import.IncludeMeaning = true;
-                }
-            }
-            if (importPaths.Count > 0 && exportPath != "")
-            {
-                var mainBody = new MainBody();
-                mainBody.Export = wordLibraryExport;
-                mainBody.Import = wordLibraryImport;
-                mainBody.SelectedWordRankGenerater = this.wordRankGenerater;
-                mainBody.Filters = this.filters;
-                mainBody.ProcessNotice += MainBody_ProcessNotice;
-                Console.WriteLine("转换开始...");
-                //foreach (string importPath in importPaths)
-                //{
-                //    Console.WriteLine("开始转换文件：" + importPath);
-                //    wordLibraryList.AddWordLibraryList(wordLibraryImport.Import(importPath));
-                //}
-                //string str = wordLibraryExport.Export(wordLibraryList);
-                if (exportPath.EndsWith("*"))
-                {
-                    mainBody.Convert(importPaths, exportPath.Substring(0, exportPath.Length - 1));
-                }
-                else
-                {
-                    string str = mainBody.Convert(importPaths);
-                    FileOperationHelper.WriteFile(exportPath, wordLibraryExport.Encoding, str);
-                }
-                Console.WriteLine("转换完成,共转换" + mainBody.Count + "个");
-            }
-            Console.WriteLine("输入 -? 可获取帮助");
-        }
+                    var cbxa = attributes[0] as ComboBoxShowAttribute;
+                    Debug.WriteLine($"{cbxa.ShortCode} - Index: {cbxa.Index}");
 
-        private void MainBody_ProcessNotice(string message)
-        {
-            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss")+"\t"+ message);
-        }
-
-        private CommandType RunCommand(string command)
-        {
-            if (command == "--help" || command == "-?")
-            {
-                showHelp(this.cbxImportItems);
-                return CommandType.Help;
-            }
-            if (command == "--version" || command == "-v")
-            {
-                Console.WriteLine("Version:"+ Assembly.GetExecutingAssembly().GetName().Version);
-                return CommandType.Help;
-            }
-            if (command.StartsWith("-i:"))
-            {
-                wordLibraryImport = GetImportInterface(command.Substring(3));
-                beginImportFile = true;
-                return CommandType.Import;
-            }
-
-            if (command.StartsWith("-o:"))
-            {
-                wordLibraryExport = GetExportInterface(command.Substring(3));
-                beginImportFile = false;
-                return CommandType.Export;
-            }
-            if (command.StartsWith("-c:")) //code
-            {
-                codingFile = command.Substring(3);
-                pattern.MappingTablePath = codingFile;
-                pattern.IsPinyinFormat = false;
-                beginImportFile = false;
-                return CommandType.Coding;
-            }
-            if (command.StartsWith("-ft:")) //filter
-            {
-                var filterStrs = command.Substring(4);
-                Regex lenRegex = new Regex(@"len:(\d+)-(\d+)");
-                Regex rankRegex = new Regex(@"rank:(\d+)-(\d+)");
-                Regex rmRegex = new Regex(@"rm:(\w+)");
-                foreach (var filterStr in filterStrs.Split('|'))
-                {
-                   if (lenRegex.IsMatch(filterStr))
+                    if (type.GetInterface("IWordLibraryImport") != null)
                     {
-                        var match = lenRegex.Match(filterStr);
-                        var from = Convert.ToInt32(match.Groups[1].Value);
-                        var to = Convert.ToInt32(match.Groups[2].Value);
-                        var numberFilter = new LengthFilter() { MinLength = from, MaxLength = to };
-                        this.filters.Add(numberFilter);
-                    }else if (rankRegex.IsMatch(filterStr))
-                    {
-                        var match = rankRegex.Match(filterStr);
-                        var from = Convert.ToInt32(match.Groups[1].Value);
-                        var to = Convert.ToInt32(match.Groups[2].Value);
-                        var rFilter = new RankFilter() { MinLength = from, MaxLength = to };
-                        this.filters.Add(rFilter);
-                    }
-                    else if (rmRegex.IsMatch(filterStr))
-                    {
-                        var match = rmRegex.Match(filterStr);
-                        var rmType = match.Groups[1].Value;
-                        ISingleFilter filter;
-                        switch (rmType)
-                        {
-                            case "eng":filter = new EnglishFilter();break;
-                            case "num":filter = new NumberFilter();break;
-                            case "space":filter = new SpaceFilter();break;
-                            case "pun":filter = new EnglishPunctuationFilter();break;
-                            default:throw new ArgumentException("Unsupport filter type:" + rmType);
-                        }                        
-                        this.filters.Add(filter);
+                        Debug.WriteLine($"Import: {type.FullName}");
+                        cbxImportItems.Add(cbxa);
+                        imports.Add(
+                            cbxa.ShortCode,
+                            assembly.CreateInstance(type.FullName) as IWordLibraryImport
+                        );
                     }
 
-                }
-                return CommandType.Coding;
-            }
-            if (command.StartsWith("-ct:")) //code type
-            {
-                var codeType = command.Substring(4).ToLower();
-                switch (codeType)
-                {
-                    case "pinyin": pattern.CodeType = CodeType.Pinyin;break;
-                    case "wubi":pattern.CodeType = CodeType.Wubi;break;
-                    case "zhengma":pattern.CodeType = CodeType.Zhengma;break;
-                    case "cangjie":pattern.CodeType = CodeType.Cangjie;break;
-                    case "zhuyin":pattern.CodeType = CodeType.TerraPinyin;break;
-                    default:pattern.CodeType = CodeType.Pinyin;break;
-                }
-                return CommandType.CodeType;
-            }
-            if (command.StartsWith("-r:")) //Rank
-            {
-                var rankType = command.Substring(3).ToLower();
-                switch (rankType)
-                {
-                    case "baidu": this.wordRankGenerater = new BaiduWordRankGenerater(); break;
-                    case "google": this.wordRankGenerater =new GoogleWordRankGenerater(); break;
-                   
-                    default: {
-                            var rankNumber = Convert.ToInt32(rankType);
-                            var gen = new DefaultWordRankGenerater();
-                            gen.ForceUse = true;
-                            gen.Rank = rankNumber;
-                            this.wordRankGenerater = gen;
-                    } break;
-                }
-                return CommandType.CodeType;
-            }
-            if (command.StartsWith("-os:")) //code type
-            {
-                var os = command.Substring(4).ToLower();
-                switch (os)
-                {
-                    case "windows": pattern.OS = OperationSystem.Windows; break;
-                    case "mac":
-                    case "macos": pattern.OS = OperationSystem.MacOS; break;
-                    case "linux":
-                    case "unix": pattern.OS = OperationSystem.Linux; break;
-                    default: pattern.OS = OperationSystem.Windows; break;
-                }
-                return CommandType.OS;
-            }
-            if (command.StartsWith("-ld2:")) //ld2 encoding
-            {
-                string ecodes = command.Substring(5);
-                string[] arr = ecodes.Split(',');
-
-                wordEncoding = Encoding.GetEncoding(arr[0]);
-                if (arr.Length > 1)
-                {
-                    xmlEncoding = Encoding.GetEncoding(arr[1]);
-                }
-
-                return CommandType.Encoding;
-            }
-            if (command.StartsWith("-f:")) //format
-            {
-                format = command.Substring(3);
-                beginImportFile = false;
-                var sort = new List<int>();
-                for (int i = 0; i < 3; i++)
-                {
-                    char c = format[i];
-                    sort.Add(Convert.ToInt32(c));
-                }
-                pattern.Sort = sort;
-                pattern.CodeSplitString = format[3].ToString();
-                pattern.SplitString = format[4].ToString();
-                string t = format[5].ToString().ToLower();
-                beginImportFile = false;
-                if (t == "l") pattern.CodeSplitType = BuildType.LeftContain;
-                if (t == "r") pattern.CodeSplitType = BuildType.RightContain;
-                if (t == "b") pattern.CodeSplitType = BuildType.FullContain;
-                if (t == "n") pattern.CodeSplitType = BuildType.None;
-                pattern.ContainCode = (format[6].ToString().ToLower() == "y");
-                pattern.ContainRank = (format[8].ToString().ToLower() == "y");
-                return CommandType.Format;
-            }
-
-            if (beginImportFile)
-            {
-                importPaths.AddRange(FileOperationHelper.GetFilesPath( command));
-            }
-            if (type == CommandType.Export)
-            {
-                exportPath = command;
-            }
-            return CommandType.Other;
-        }
-
-        private void LoadImeList()
-        {
-            Assembly assembly = GetType().Assembly;
-            Type[] d = assembly.GetTypes();
-
-
-            foreach (Type type in d)
-            {
-                if (type.Namespace != null && type.Namespace.StartsWith("Studyzy.IMEWLConverter.IME"))
-                {
-                    object[] att = type.GetCustomAttributes(typeof (ComboBoxShowAttribute), false);
-                    if (att.Length > 0)
+                    if (type.GetInterface("IWordLibraryExport") != null)
                     {
-                        var cbxa = att[0] as ComboBoxShowAttribute;
-                        Debug.WriteLine(cbxa.ShortCode);
-                        Debug.WriteLine(cbxa.Index);
-                        if (type.GetInterface("IWordLibraryImport") != null)
-                        {
-                            Debug.WriteLine("Import!!!!" + type.FullName);
-                            cbxImportItems.Add(cbxa);
-                            imports.Add(cbxa.ShortCode, assembly.CreateInstance(type.FullName) as IWordLibraryImport);
-                        }
-                        if (type.GetInterface("IWordLibraryExport") != null)
-                        {
-                            Debug.WriteLine("Export!!!!" + type.FullName);
-                            cbxExportItems.Add(cbxa);
-                            exports.Add(cbxa.ShortCode, assembly.CreateInstance(type.FullName) as IWordLibraryExport);
-                        }
+                        Debug.WriteLine($"Export: {type.FullName}");
+                        cbxExportItems.Add(cbxa);
+                        exports.Add(
+                            cbxa.ShortCode,
+                            assembly.CreateInstance(type.FullName) as IWordLibraryExport
+                        );
                     }
                 }
             }
-            cbxImportItems.Sort((a, b) => a.Index - b.Index);
-            cbxExportItems.Sort((a, b) => a.Index - b.Index);
         }
 
-        private IWordLibraryExport GetExportInterface(string str)
+        cbxImportItems.Sort((a, b) => a.Index - b.Index);
+        cbxExportItems.Sort((a, b) => a.Index - b.Index);
+    }
+
+    private IWordLibraryExport GetExportInterface(string str)
+    {
+        if (!exports.TryGetValue(str, out var export))
         {
-            try
-            {
-                return exports[str];
-            }
-            catch
-            {
-                throw new ArgumentException("导出词库的输入法错误");
-            }
+            throw new ArgumentException($"导出词库的输入法格式错误: {str}");
         }
+        return export;
+    }
 
-        private IWordLibraryImport GetImportInterface(string str)
+    private IWordLibraryImport GetImportInterface(string str)
+    {
+        if (!imports.TryGetValue(str, out var import))
         {
-            try
-            {
-                return imports[str];
-            }
-            catch
-            {
-                throw new ArgumentException("导入词库的输入法错误");
-            }
+            throw new ArgumentException($"导入词库的输入法格式错误: {str}");
         }
-
-     
-        #region Nested type: CommandType
-
-        private enum CommandType
-        {
-            Import,
-            Export,
-            Help,
-            Null,
-            //编码映射文件
-            Coding,
-            //编码类型
-            CodeType,
-            Format,
-            Encoding,
-            OS,
-            Other
-        }
-
-        #endregion
+        return import;
     }
 }

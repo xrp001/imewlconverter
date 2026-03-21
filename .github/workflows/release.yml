@@ -1,0 +1,315 @@
+name: Release
+
+# 仅在创建 tag 时触发
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch: # 允许手动触发
+
+# 权限配置
+permissions:
+  contents: write # 需要创建 release
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  # 生成 changelog
+  changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      changes: ${{ steps.changelog.outputs.changes }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Generate CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
+          writeToFile: false
+          includeInvalidCommits: true
+
+      - name: Save changelog to file
+        run: echo "${{ steps.changelog.outputs.changes }}" > CHANGELOG.txt
+
+      - name: Upload changelog
+        uses: actions/upload-artifact@v7
+        with:
+          name: changelog
+          path: CHANGELOG.txt
+          retention-days: 1
+
+  # Windows 平台打包 (CLI + GUI)
+  package-windows:
+    name: Package Windows (${{ matrix.arch }})
+    runs-on: windows-latest
+    timeout-minutes: 30
+    
+    strategy:
+      matrix:
+        arch: [x64, x86]
+        include:
+          - arch: x64
+            runtime: win-x64
+          - arch: x86
+            runtime: win-x86
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: make restore
+
+      - name: Publish CLI
+        run: |
+          dotnet publish --configuration Release `
+            -p:PublishSingleFile=true `
+            --self-contained false `
+            -r ${{ matrix.runtime }} `
+            --output ./publish/${{ matrix.runtime }}/cli `
+            ./src/ImeWlConverterCmd
+
+      - name: Publish Windows GUI
+        run: |
+          dotnet publish --configuration Release `
+            -p:PublishSingleFile=true `
+            --self-contained false `
+            -r ${{ matrix.runtime }} `
+            --output ./publish/${{ matrix.runtime }}/gui `
+            "./src/IME WL Converter Win"
+
+      - name: Create archive
+        run: |
+          Compress-Archive -Path publish/${{ matrix.runtime }}/* `
+            -DestinationPath imewlconverter_${{ matrix.runtime }}.zip
+
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-windows-${{ matrix.arch }}
+          path: imewlconverter_${{ matrix.runtime }}.zip
+          retention-days: 1
+
+  # Linux 平台打包 (CLI only)
+  package-linux:
+    name: Package Linux (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+        include:
+          - arch: x64
+            runtime: linux-x64
+          - arch: arm64
+            runtime: linux-arm64
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: make restore
+
+      - name: Publish CLI
+        run: |
+          dotnet publish --configuration Release \
+            -p:PublishSingleFile=true \
+            --self-contained false \
+            -r ${{ matrix.runtime }} \
+            --output ./publish/${{ matrix.runtime }} \
+            ./src/ImeWlConverterCmd
+
+      - name: Create archive
+        run: |
+          tar -czf imewlconverter_${{ matrix.runtime }}.tar.gz \
+            -C publish/${{ matrix.runtime }} .
+
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-linux-${{ matrix.arch }}
+          path: imewlconverter_${{ matrix.runtime }}.tar.gz
+          retention-days: 1
+
+  # macOS 平台打包 (CLI + GUI .app bundles)
+  package-macos:
+    name: Package macOS (${{ matrix.arch }})
+    runs-on: macos-latest
+    timeout-minutes: 30
+    
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+        include:
+          - arch: x64
+            runtime: osx-x64
+          - arch: arm64
+            runtime: osx-arm64
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: make restore
+
+      - name: Publish CLI
+        run: |
+          dotnet publish --configuration Release \
+            -p:PublishSingleFile=true \
+            --self-contained false \
+            -r ${{ matrix.runtime }} \
+            --output ./publish/${{ matrix.runtime }}/cli \
+            ./src/ImeWlConverterCmd
+
+      - name: Build macOS GUI app bundle
+        run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            make app-mac-arm64
+          else
+            make app-mac-x64
+          fi
+
+      - name: Create CLI archive
+        run: |
+          tar -czf imewlconverter_${{ matrix.runtime }}_cli.tar.gz \
+            -C publish/${{ matrix.runtime }}/cli .
+
+      - name: Create GUI app archive
+        run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            zip -r imewlconverter_macos-arm64.zip "深蓝词库转换-arm64.app"
+          else
+            zip -r imewlconverter_macos-x64.zip "深蓝词库转换-x64.app"
+          fi
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-macos-${{ matrix.arch }}
+          path: |
+            imewlconverter_${{ matrix.runtime }}_cli.tar.gz
+            imewlconverter_macos-*.zip
+          retention-days: 1
+
+  # 创建 GitHub Release
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - changelog
+      - package-windows
+      - package-linux
+      - package-macos
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Display artifact structure
+        run: ls -R artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -type f \( -name "*.zip" -o -name "*.tar.gz" \) \
+            -exec cp {} release-assets/ \;
+          ls -lh release-assets/
+
+      - name: Download changelog
+        uses: actions/download-artifact@v8
+        with:
+          name: changelog
+          path: .
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release-assets/*"
+          bodyFile: CHANGELOG.txt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+
+  # 发布到其他平台 (可选,如果需要)
+  # publish-nuget:
+  #   name: Publish to NuGet
+  #   runs-on: ubuntu-latest
+  #   needs: create-release
+  #   if: "!contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta')"
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v6
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@v5
+  #       with:
+  #         dotnet-version: ${{ env.DOTNET_VERSION }}
+  #     - name: Pack and publish
+  #       run: |
+  #         dotnet pack --configuration Release
+  #         dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }}

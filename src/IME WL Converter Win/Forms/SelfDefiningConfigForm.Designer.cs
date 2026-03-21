@@ -1,4 +1,21 @@
-﻿namespace Studyzy.IMEWLConverter
+﻿/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+namespace Studyzy.IMEWLConverter
 {
     partial class SelfDefiningConfigForm
     {
@@ -212,6 +229,7 @@
             this.cbxCodeType.TabIndex = 19;
             this.cbxCodeType.Text = "拼音编码";
             this.cbxCodeType.SelectedIndexChanged += new System.EventHandler(this.cbxCodeType_SelectedIndexChanged);
+            this.cbxCodeType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label8
             // 
@@ -235,6 +253,7 @@
             this.cbxCodeFormat.TabIndex = 17;
             this.cbxCodeFormat.Text = "拼音规则";
             this.cbxCodeFormat.SelectedIndexChanged += new System.EventHandler(this.cbxCodeFormat_SelectedIndexChanged);
+            this.cbxCodeFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // rtbCodeFormat
             // 
@@ -256,55 +275,14 @@
             "GBK",
             "Big5",
             "UnicodeFFFE",
-            "ASCII",
-            "Unicode",
-            "UTF-8",
-            "GB18030",
-            "GBK",
-            "Big5",
-            "UnicodeFFFE",
-            "ASCII",
-            "Unicode",
-            "UTF-8",
-            "GB18030",
-            "GBK",
-            "Big5",
-            "UnicodeFFFE",
-            "ASCII",
-            "Unicode",
-            "UTF-8",
-            "GB18030",
-            "GBK",
-            "Big5",
-            "UnicodeFFFE",
-            "ASCII",
-            "Unicode",
-            "UTF-8",
-            "GB18030",
-            "GBK",
-            "Big5",
-            "UnicodeFFFE",
-            "ASCII",
-            "Unicode",
-            "UTF-8",
-            "GB18030",
-            "GBK",
-            "Big5",
-            "UnicodeFFFE",
-            "ASCII",
-            "Unicode",
-            "UTF-8",
-            "GB18030",
-            "GBK",
-            "Big5",
-            "UnicodeFFFE",
             "ASCII"});
             this.cbxTextEncoding.Location = new System.Drawing.Point(423, 52);
             this.cbxTextEncoding.Name = "cbxTextEncoding";
-            this.cbxTextEncoding.SelectedEncoding = ((System.Text.Encoding)(resources.GetObject("cbxTextEncoding.SelectedEncoding")));
             this.cbxTextEncoding.Size = new System.Drawing.Size(89, 21);
             this.cbxTextEncoding.TabIndex = 14;
+            this.cbxTextEncoding.SelectedIndex = 1; // UTF-8
             this.cbxTextEncoding.Visible = false;
+            this.cbxTextEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // groupBox4
             // 
@@ -385,6 +363,7 @@
             this.cbbxSplitString.TabIndex = 18;
             this.cbbxSplitString.Text = "空格";
             this.cbbxSplitString.SelectedIndexChanged += new System.EventHandler(this.cbbxSplitString_SelectedIndexChanged);
+            this.cbbxSplitString.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label5
             // 
@@ -560,7 +539,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "自定义词库编码";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelfDefiningConverterForm_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

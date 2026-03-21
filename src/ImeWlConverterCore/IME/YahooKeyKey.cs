@@ -1,26 +1,41 @@
-﻿using System;
+﻿/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Studyzy.IMEWLConverter.Entities;
 using Studyzy.IMEWLConverter.Helpers;
 
-namespace Studyzy.IMEWLConverter.IME
+namespace Studyzy.IMEWLConverter.IME;
+
+/// <summary>
+///     雅虎奇摩输入法
+/// </summary>
+[ComboBoxShow(ConstantString.YAHOO_KEYKEY, ConstantString.YAHOO_KEYKEY_C, 200)]
+public class YahooKeyKey : BaseTextImport, IWordLibraryExport, IWordLibraryTextImport
 {
-    /// <summary>
-    ///     雅虎奇摩输入法
-    /// </summary>
-    [ComboBoxShow(ConstantString.YAHOO_KEYKEY, ConstantString.YAHOO_KEYKEY_C, 200)]
-    public class YahooKeyKey : BaseImport, IWordLibraryExport, IWordLibraryTextImport
-    {
-        public override CodeType CodeType
-        {
-            get { return CodeType.Zhuyin; }
-        }
+    public override CodeType CodeType => CodeType.Zhuyin;
 
-        #region IWordLibraryExport 成员
+    #region IWordLibraryExport 成员
 
-        private static string END_STRING = @"
+    private static readonly string END_STRING =
+        @"
 # What follows is the Automatic Learning database, do not remove this
 <database>
 7c7b5c2bfd227076f056b3ea475ff6470400010120402020f69be92ab0f5
@@ -128,133 +143,103 @@ b348405ef9a3aebf9328958712e2d0048e97e51bd7e2ab633571cbc51f86
 4ec63bf0b064eaff58fc9805
 </database>
 ";
-        //private readonly IWordCodeGenerater generater = new ZhuyinGenerater();
 
-        public Encoding Encoding
-        {
-            get { return Encoding.UTF8; }
-        }
+    //private readonly IWordCodeGenerater generater = new ZhuyinGenerater();
 
-        public string ExportLine(WordLibrary wl)
-        {
-            var sb = new StringBuilder();
+    public override Encoding Encoding => Encoding.UTF8;
 
-            sb.Append(wl.Word);
-            sb.Append("\t");
-            //IList<string> zhuyins = null;
-            //if (wl.CodeType == CodeType.Pinyin) //如果本来就是拼音输入法导入的，那么就用其拼音，不过得加上音调
-            //{
-            //    IList<string> pinyin = new List<string>();
-            //    for (int i = 0; i < wl.PinYin.Length; i++)
-            //    {
-            //        if (regex.IsMatch(wl.PinYin[i]))
-            //        {
-            //            pinyin.Add(wl.PinYin[i]);
-            //        }
-            //        else
-            //        {
-            //            pinyin.Add(PinyinHelper.AddToneToPinyin(wl.Word[i], wl.PinYin[i]));
-            //        }
-            //    }
-            //    zhuyins = ZhuyinHelper.GetZhuyin(pinyin);
-            //}
-            //else
-            //{
-            //    //zhuyins = generater.GetCodeOfString(wl.Word);
-            //}
+    public string ExportLine(WordLibrary wl)
+    {
+        var sb = new StringBuilder();
 
-            //sb.Append(CollectionHelper.ListToString(zhuyins, ","));
+        sb.Append(wl.Word);
+        sb.Append("\t");
+        //IList<string> zhuyins = null;
+        //if (wl.CodeType == CodeType.Pinyin) //如果本来就是拼音输入法导入的，那么就用其拼音，不过得加上音调
+        //{
+        //    IList<string> pinyin = new List<string>();
+        //    for (int i = 0; i < wl.PinYin.Length; i++)
+        //    {
+        //        if (regex.IsMatch(wl.PinYin[i]))
+        //        {
+        //            pinyin.Add(wl.PinYin[i]);
+        //        }
+        //        else
+        //        {
+        //            pinyin.Add(PinyinHelper.AddToneToPinyin(wl.Word[i], wl.PinYin[i]));
+        //        }
+        //    }
+        //    zhuyins = ZhuyinHelper.GetZhuyin(pinyin);
+        //}
+        //else
+        //{
+        //    //zhuyins = generater.GetCodeOfString(wl.Word);
+        //}
 
-            sb.Append(wl.GetPinYinString(",", BuildType.None));
-            sb.Append("\t");
-            sb.Append("-1.0");
-            sb.Append("\t");
-            sb.Append("0.0");
-            return sb.ToString();
-        }
+        //sb.Append(CollectionHelper.ListToString(zhuyins, ","));
 
-
-        public IList<string> Export(WordLibraryList wlList)
-        {
-            var sb = new StringBuilder();
-            sb.Append("MJSR version 1.0.0\r\n");
-            for (int i = 0; i < wlList.Count; i++)
-            {
-                try
-                {
-                    sb.Append(ExportLine(wlList[i]));
-                    sb.Append("\r\n");
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(wlList[i] + ex.Message);
-                }
-            }
-            sb.Append(END_STRING);
-            return new List<string>() { sb.ToString() };
-        }
-
-        #endregion
-
-        #region IWordLibraryImport 成员
-
-        public WordLibraryList Import(string path)
-        {
-            string str = FileOperationHelper.ReadFile(path, Encoding);
-            return ImportText(str);
-        }
-
-        public WordLibraryList ImportText(string str)
-        {
-            var wlList = new WordLibraryList();
-            string[] lines = str.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
-            CountWord = lines.Length;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string line = lines[i];
-                CurrentStatus = i;
-                if (IsWordLine(line))
-                {
-                    wlList.AddWordLibraryList(ImportLine(line));
-                }
-            }
-            return wlList;
-        }
-
-
-        public WordLibraryList ImportLine(string line)
-        {
-            string[] c = line.Split('\t');
-            var wl = new WordLibrary();
-            wl.Word = c[0];
-            wl.Rank = DefaultRank;
-            string zhuyin = c[1];
-            var pys = new List<string>();
-            foreach (string zy in zhuyin.Split(','))
-            {
-                try
-                {
-                    string py = ZhuyinHelper.GetPinyin(zy);
-                    pys.Add(py);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-            }
-            wl.PinYin = pys.ToArray();
-            var wll = new WordLibraryList();
-            wll.Add(wl);
-            return wll;
-        }
-
-        private bool IsWordLine(string line)
-        {
-            return line.Split('\t').Length == 4;
-        }
-
-        #endregion
-
-        //private static readonly Regex regex = new Regex(@"^[a-zA-Z]+\d$");
+        sb.Append(wl.GetPinYinString(",", BuildType.None));
+        sb.Append("\t");
+        sb.Append("-1.0");
+        sb.Append("\t");
+        sb.Append("0.0");
+        return sb.ToString();
     }
+
+    public IList<string> Export(WordLibraryList wlList)
+    {
+        var sb = new StringBuilder();
+        sb.Append("MJSR version 1.0.0\r\n");
+        for (var i = 0; i < wlList.Count; i++)
+            try
+            {
+                sb.Append(ExportLine(wlList[i]));
+                sb.Append("\r\n");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(wlList[i] + ex.Message);
+            }
+
+        sb.Append(END_STRING);
+        return new List<string> { sb.ToString() };
+    }
+
+    #endregion
+
+    #region IWordLibraryImport 成员
+
+    public override WordLibraryList ImportLine(string line)
+    {
+        var c = line.Split('\t');
+        var wl = new WordLibrary();
+        wl.Word = c[0];
+        wl.Rank = DefaultRank;
+        var zhuyin = c[1];
+        var pys = new List<string>();
+        foreach (var zy in zhuyin.Split(','))
+            try
+            {
+                var py = ZhuyinHelper.GetPinyin(zy);
+                pys.Add(py);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+        wl.PinYin = pys.ToArray();
+        var wll = new WordLibraryList();
+        wll.Add(wl);
+        return wll;
+    }
+
+    protected override bool IsContent(string line)
+    {
+        return line.Split('\t').Length == 4;
+    }
+
+    #endregion
+
+    //private static readonly Regex regex = new Regex(@"^[a-zA-Z]+\d$");
 }

@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -45,7 +62,7 @@ namespace Studyzy.IMEWLConverter
                 return;
             }
             string str = FileOperationHelper.ReadFile(path);
-            string[] lines = str.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = str.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             int count = lines.Length;
             var wls = new Dictionary<string, string>();
             for (int i = 0; i < count; i++)
@@ -71,7 +88,7 @@ namespace Studyzy.IMEWLConverter
             ShowTextMessage("开始载入现有的注音库");
             string pylibString = FileOperationHelper.ReadFile(ConstantString.PinyinLibPath);
 
-            lines = pylibString.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            lines = pylibString.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
@@ -86,13 +103,14 @@ namespace Studyzy.IMEWLConverter
                 processString = i + "/" + count;
             }
 
-
             ShowTextMessage("载入全部完成,开始去除重复");
             Dictionary<string, string> rst = RemoveDuplicateWords(wls);
 
-
             ShowTextMessage("去除重复完成，开始写入文件");
-            StreamWriter sw = FileOperationHelper.WriteFile(ConstantString.PinyinLibPath, Encoding.Unicode); //清空注音库文件
+            StreamWriter sw = FileOperationHelper.WriteFile(
+                ConstantString.PinyinLibPath,
+                Encoding.Unicode
+            ); //清空注音库文件
             foreach (string key in rst.Keys)
             {
                 string line = rst[key] + " " + key;
@@ -115,7 +133,7 @@ namespace Studyzy.IMEWLConverter
             if (txtWLFilePath.InvokeRequired)
             {
                 GetTextD d = GetText;
-                return (string) txtWLFilePath.Invoke(d);
+                return (string)txtWLFilePath.Invoke(d);
             }
             return txtWLFilePath.Text;
         }
@@ -159,7 +177,7 @@ namespace Studyzy.IMEWLConverter
 
         private bool NeedSave(string word, string py)
         {
-            string[] pylist = py.Split(new[] {"'"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pylist = py.Split(new[] { "'" }, StringSplitOptions.RemoveEmptyEntries);
             return NeedSave(word, new List<string>(pylist));
         }
 
@@ -184,7 +202,6 @@ namespace Studyzy.IMEWLConverter
             {
                 processString = (i++) + "/" + count;
 
-
                 foreach (string p in wl.Keys)
                 {
                     if (p.Contains(key) && p != key)
@@ -195,7 +212,10 @@ namespace Studyzy.IMEWLConverter
             }
 
             //内置资源就不需要再生成了
-            string[] internalPyLib = Dictionaries.WordPinyin.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] internalPyLib = Dictionaries.WordPinyin.Split(
+                new[] { "\r\n" },
+                StringSplitOptions.RemoveEmptyEntries
+            );
 
             foreach (string line in internalPyLib)
             {
@@ -217,7 +237,6 @@ namespace Studyzy.IMEWLConverter
             }
         }
 
-
         /// <summary>
         ///     打印错误消息
         /// </summary>
@@ -227,7 +246,7 @@ namespace Studyzy.IMEWLConverter
             if (richTextBox1.InvokeRequired)
             {
                 ShowTextMessageDelegate d = ShowTextErrorMessage;
-                richTextBox1.Invoke(d, new object[] {message});
+                richTextBox1.Invoke(d, new object[] { message });
             }
             else
             {
@@ -248,7 +267,7 @@ namespace Studyzy.IMEWLConverter
             if (richTextBox1.InvokeRequired)
             {
                 ShowTextMessageDelegate d = ShowTextMessage;
-                richTextBox1.Invoke(d, new object[] {message});
+                richTextBox1.Invoke(d, new object[] { message });
             }
             else
             {

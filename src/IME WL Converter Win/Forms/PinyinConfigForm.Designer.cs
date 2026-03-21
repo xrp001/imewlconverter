@@ -1,4 +1,21 @@
-﻿namespace Studyzy.IMEWLConverter
+﻿/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+namespace Studyzy.IMEWLConverter
 {
     partial class PinyinConfigForm
     {
@@ -36,9 +53,10 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 24);
+            this.label1.Location = new System.Drawing.Point(17, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.Size = new System.Drawing.Size(82, 15);
             this.label1.TabIndex = 0;
             this.label1.Text = "编码方案：";
             // 
@@ -47,19 +65,30 @@
             this.cbxPinyinType.FormattingEnabled = true;
             this.cbxPinyinType.Items.AddRange(new object[] {
             "全拼",
+            "微软双拼",
             "小鹤双拼",
+            "智能ABC",
+            "自然码",
+            "拼音加加",
+            "星空键道",
+            "大牛双拼",
+            "小浪双拼",
+            "紫光拼音",
             "用户自定义短语"});
-            this.cbxPinyinType.Location = new System.Drawing.Point(100, 21);
+            this.cbxPinyinType.Location = new System.Drawing.Point(133, 26);
+            this.cbxPinyinType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxPinyinType.Name = "cbxPinyinType";
-            this.cbxPinyinType.Size = new System.Drawing.Size(136, 20);
+            this.cbxPinyinType.Size = new System.Drawing.Size(180, 23);
             this.cbxPinyinType.TabIndex = 1;
             this.cbxPinyinType.Text = "全拼";
+            this.cbxPinyinType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(228, 100);
+            this.btnOK.Location = new System.Drawing.Point(304, 125);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.Size = new System.Drawing.Size(100, 29);
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "确定";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -68,13 +97,14 @@
             // PinyinConfigForm
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.Dialog;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(333, 135);
+            this.ClientSize = new System.Drawing.Size(444, 169);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.cbxPinyinType);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "PinyinConfigForm";

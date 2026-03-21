@@ -1,0 +1,250 @@
+suite_name: 2-exports
+description: 导出测试 - 验证统一的CSV词库数据能正确导出为各种输入法格式
+enabled: true
+format_options: "213',nyyy"
+test_cases:
+- name: E01-CSV到搜狗拼音文本
+  description: 测试导出为搜狗拼音文本格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: sgpy
+    expected: expected/e01-csv-to-sgpy.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - sougou
+  - baseline
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E02-CSV到QQ拼音文本
+  description: 测试导出为QQ拼音文本格式(UTF-16LE编码)
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: qqpy
+    expected: expected/e02-csv-to-qqpy.expected
+    encoding: UTF-16LE
+  tags:
+  - text
+  - qqpinyin
+  - encoding
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E03-CSV到Rime格式
+  description: 测试导出为Rime输入法格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: rime
+    expected: expected/e03-csv-to-rime.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - rime
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E04-CSV到微软拼音
+  description: 测试导出为微软拼音格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: mspy
+    expected: expected/e04-csv-to-mspy.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - microsoft
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E06-CSV到谷歌拼音
+  description: 测试导出为谷歌拼音格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: ggpy
+    expected: expected/e06-csv-to-ggpy.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - google
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E07-CSV到百度拼音
+  description: 测试导出为百度拼音格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: bdpy
+    expected: expected/e07-csv-to-bdpy.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - baidu
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E08-CSV到拼音加加
+  description: 测试导出为拼音加加格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: pyjj
+    expected: expected/e08-csv-to-pyjj.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - pinyinjiajia
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E09-CSV到紫光拼音
+  description: 测试导出为华宇紫光拼音格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: zgpy
+    expected: expected/e09-csv-to-zgpy.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - ziguang
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E14-CSV到libpinyin
+  description: 测试导出为libpinyin格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: libpy
+    expected: expected/e14-csv-to-libpy.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - libpinyin
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E15-CSV到FIT输入法
+  description: 测试导出为FIT输入法格式
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: fit
+    expected: expected/e15-csv-to-fit.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - fit
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+- name: E16-CSV到Mac简体拼音
+  description: 测试导出为Mac简体拼音格式
+  enabled: true
+  timeout: 60
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: plist
+    expected: expected/e16-csv-to-plist.expected
+    encoding: UTF-8
+  tags:
+  - text
+  - mac
+  stats:
+    words: 200
+    source: 唐诗300首前200词条
+
+
+
+
+- name: E17-CSV到行列30自定义编码
+  description: 测试使用array30编码映射表和多字词规则导出为行列30自定义编码格式
+  enabled: true
+  timeout: 30
+  expect_failure: false
+  input:
+    file: source/source-data-csv.txt
+    format: self
+    encoding: UTF-8
+  output:
+    format: self
+    expected: expected/e17-csv-to-array30.expected
+    encoding: UTF-8
+  extra_args:
+  - '"-c"'
+  - '"../../src/ImeWlConverterCoreTest/Test/array30.txt"'
+  - '"-m"'
+  - '"code_e2=p11+p12+p21+p22,code_e3=p11+p21+p31+p32,code_a4=p11+p21+p31+n11"'
+  tags:
+  - text
+  - custom
+  - array30
+  stats:
+    words: 7
+    source: 自定义测试数据
+  note: "行列30自定义编码功能说明:\n1. 命令行工具已支持 -c: 和 -mc: 参数\n2. -c: 指定单字编码映射表（汉字→编码）\n3. -mc:\
+    \ 直接指定多字词编码规则字符串（逗号分隔）\n4. 此功能主要用于形码输入法（五笔、郑码、行列等）词库转换\n5. 多字词编码规则示例:\n\
+    \   - code_e2: 2字词 = p11+p12+p21+p22 (每字前2码)\n   - code_e3: 3字词 = p11+p21+p31+p32 (1,2字首码+3字前2码)\n\
+    \   - code_a4: 4+字词 = p11+p21+p31+n11 (1,2,3字首码+末字首码)\n6. 完整的功能验证请参考单元测试: src/ImeWlConverterCoreTest/SelfDefiningTest.cs\n"
+

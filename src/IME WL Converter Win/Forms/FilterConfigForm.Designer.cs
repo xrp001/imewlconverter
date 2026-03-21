@@ -1,4 +1,21 @@
-﻿namespace Studyzy.IMEWLConverter
+﻿/*
+ *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
+
+ *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+namespace Studyzy.IMEWLConverter
 {
     partial class FilterConfigForm
     {
@@ -28,316 +45,510 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOK = new System.Windows.Forms.Button();
-            this.numWordLengthFrom = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.numWordLengthTo = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.numWordRankFrom = new System.Windows.Forms.NumericUpDown();
-            this.numWordRankTo = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.cbxFilterEnglish = new System.Windows.Forms.CheckBox();
-            this.cbxFilterSpace = new System.Windows.Forms.CheckBox();
-            this.cbxFilterPunctuation = new System.Windows.Forms.CheckBox();
-            this.cbxNoFilter = new System.Windows.Forms.CheckBox();
-            this.cbxReplacePunctuation = new System.Windows.Forms.CheckBox();
-            this.cbxReplaceSpace = new System.Windows.Forms.CheckBox();
-            this.cbxReplaceEnglish = new System.Windows.Forms.CheckBox();
-            this.cbxReplaceNumber = new System.Windows.Forms.CheckBox();
-            this.cbxFilterNumber = new System.Windows.Forms.CheckBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.numWordRankPercentage = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordLengthFrom)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordLengthTo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordRankFrom)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordRankTo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordRankPercentage)).BeginInit();
-            this.SuspendLayout();
+            btnOK = new System.Windows.Forms.Button();
+            numWordLengthFrom = new System.Windows.Forms.NumericUpDown();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            numWordLengthTo = new System.Windows.Forms.NumericUpDown();
+            label3 = new System.Windows.Forms.Label();
+            numWordRankFrom = new System.Windows.Forms.NumericUpDown();
+            numWordRankTo = new System.Windows.Forms.NumericUpDown();
+            label4 = new System.Windows.Forms.Label();
+            cbxFilterEnglish = new System.Windows.Forms.CheckBox();
+            cbxFilterSpace = new System.Windows.Forms.CheckBox();
+            cbxFilterPunctuation = new System.Windows.Forms.CheckBox();
+            cbxNoFilter = new System.Windows.Forms.CheckBox();
+            cbxReplacePunctuation = new System.Windows.Forms.CheckBox();
+            cbxReplaceSpace = new System.Windows.Forms.CheckBox();
+            cbxReplaceEnglish = new System.Windows.Forms.CheckBox();
+            cbxReplaceNumber = new System.Windows.Forms.CheckBox();
+            cbxFilterNumber = new System.Windows.Forms.CheckBox();
+            label5 = new System.Windows.Forms.Label();
+            numWordRankPercentage = new System.Windows.Forms.NumericUpDown();
+            label6 = new System.Windows.Forms.Label();
+            cbxFilterNoAlphabetCode = new System.Windows.Forms.CheckBox();
+            cbxKeepNumber = new System.Windows.Forms.CheckBox();
+            cbxKeepEnglish = new System.Windows.Forms.CheckBox();
+            cbxFilterFirstCJK = new System.Windows.Forms.CheckBox();
+            cbxKeepNumber_ = new System.Windows.Forms.CheckBox();
+            cbxKeepEnglish_ = new System.Windows.Forms.CheckBox();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            cbxFullWidth = new System.Windows.Forms.CheckBox();
+            cbxKeepSpace = new System.Windows.Forms.CheckBox();
+            cbxKeepSpace_ = new System.Windows.Forms.CheckBox();
+            cbxChsNumber = new System.Windows.Forms.CheckBox();
+            cbxPrefixEnglish = new System.Windows.Forms.CheckBox();
+            cbxKeepPunctuation_ = new System.Windows.Forms.CheckBox();
+            cbxKeepPunctuation = new System.Windows.Forms.CheckBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            ((System.ComponentModel.ISupportInitialize)numWordLengthFrom).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numWordLengthTo).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numWordRankFrom).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numWordRankTo).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numWordRankPercentage).BeginInit();
+            groupBox1.SuspendLayout();
+            SuspendLayout();
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(189, 287);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 25);
-            this.btnOK.TabIndex = 0;
-            this.btnOK.Text = "确定";
-            this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            btnOK.Location = new System.Drawing.Point(695, 33);
+            btnOK.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new System.Drawing.Size(88, 33);
+            btnOK.TabIndex = 0;
+            btnOK.Text = "确定";
+            btnOK.UseVisualStyleBackColor = true;
+            btnOK.Click += btnOK_Click;
             // 
             // numWordLengthFrom
             // 
-            this.numWordLengthFrom.Location = new System.Drawing.Point(97, 23);
-            this.numWordLengthFrom.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numWordLengthFrom.Name = "numWordLengthFrom";
-            this.numWordLengthFrom.Size = new System.Drawing.Size(65, 20);
-            this.numWordLengthFrom.TabIndex = 1;
-            this.numWordLengthFrom.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            numWordLengthFrom.Location = new System.Drawing.Point(113, 29);
+            numWordLengthFrom.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            numWordLengthFrom.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numWordLengthFrom.Name = "numWordLengthFrom";
+            numWordLengthFrom.Size = new System.Drawing.Size(76, 23);
+            numWordLengthFrom.TabIndex = 1;
+            numWordLengthFrom.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "保留字数： 从";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(14, 33);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(84, 17);
+            label1.TabIndex = 2;
+            label1.Text = "保留字数： 从";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 64);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "保留词频： 从";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(14, 84);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(84, 17);
+            label2.TabIndex = 3;
+            label2.Text = "保留词频： 从";
             // 
             // numWordLengthTo
             // 
-            this.numWordLengthTo.Location = new System.Drawing.Point(199, 23);
-            this.numWordLengthTo.Name = "numWordLengthTo";
-            this.numWordLengthTo.Size = new System.Drawing.Size(65, 20);
-            this.numWordLengthTo.TabIndex = 1;
-            this.numWordLengthTo.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+            numWordLengthTo.Location = new System.Drawing.Point(232, 29);
+            numWordLengthTo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            numWordLengthTo.Name = "numWordLengthTo";
+            numWordLengthTo.Size = new System.Drawing.Size(76, 23);
+            numWordLengthTo.TabIndex = 1;
+            numWordLengthTo.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(168, 25);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(19, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "到";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(196, 33);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(20, 17);
+            label3.TabIndex = 4;
+            label3.Text = "到";
             // 
             // numWordRankFrom
             // 
-            this.numWordRankFrom.Location = new System.Drawing.Point(97, 62);
-            this.numWordRankFrom.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numWordRankFrom.Name = "numWordRankFrom";
-            this.numWordRankFrom.Size = new System.Drawing.Size(65, 20);
-            this.numWordRankFrom.TabIndex = 1;
-            this.numWordRankFrom.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
+            numWordRankFrom.Location = new System.Drawing.Point(113, 80);
+            numWordRankFrom.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            numWordRankFrom.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+            numWordRankFrom.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numWordRankFrom.Name = "numWordRankFrom";
+            numWordRankFrom.Size = new System.Drawing.Size(76, 23);
+            numWordRankFrom.TabIndex = 1;
+            numWordRankFrom.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
             // numWordRankTo
             // 
-            this.numWordRankTo.Location = new System.Drawing.Point(199, 62);
-            this.numWordRankTo.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
-            this.numWordRankTo.Name = "numWordRankTo";
-            this.numWordRankTo.Size = new System.Drawing.Size(65, 20);
-            this.numWordRankTo.TabIndex = 1;
-            this.numWordRankTo.Value = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
+            numWordRankTo.Location = new System.Drawing.Point(232, 80);
+            numWordRankTo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            numWordRankTo.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+            numWordRankTo.Minimum = new decimal(new int[] { 9, 0, 0, 0 });
+            numWordRankTo.Name = "numWordRankTo";
+            numWordRankTo.Size = new System.Drawing.Size(76, 23);
+            numWordRankTo.TabIndex = 1;
+            numWordRankTo.Value = new decimal(new int[] { 999999, 0, 0, 0 });
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(168, 64);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(19, 13);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "到";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(196, 84);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(20, 17);
+            label4.TabIndex = 4;
+            label4.Text = "到";
             // 
             // cbxFilterEnglish
             // 
-            this.cbxFilterEnglish.AutoSize = true;
-            this.cbxFilterEnglish.Checked = true;
-            this.cbxFilterEnglish.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbxFilterEnglish.Location = new System.Drawing.Point(14, 134);
-            this.cbxFilterEnglish.Name = "cbxFilterEnglish";
-            this.cbxFilterEnglish.Size = new System.Drawing.Size(122, 17);
-            this.cbxFilterEnglish.TabIndex = 5;
-            this.cbxFilterEnglish.Text = "过滤包含英文的词";
-            this.cbxFilterEnglish.UseVisualStyleBackColor = true;
+            cbxFilterEnglish.AutoSize = true;
+            cbxFilterEnglish.Location = new System.Drawing.Point(19, 228);
+            cbxFilterEnglish.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFilterEnglish.Name = "cbxFilterEnglish";
+            cbxFilterEnglish.Size = new System.Drawing.Size(123, 21);
+            cbxFilterEnglish.TabIndex = 5;
+            cbxFilterEnglish.Text = "过滤包含英文的词";
+            cbxFilterEnglish.UseVisualStyleBackColor = true;
             // 
             // cbxFilterSpace
             // 
-            this.cbxFilterSpace.AutoSize = true;
-            this.cbxFilterSpace.Checked = true;
-            this.cbxFilterSpace.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbxFilterSpace.Location = new System.Drawing.Point(14, 211);
-            this.cbxFilterSpace.Name = "cbxFilterSpace";
-            this.cbxFilterSpace.Size = new System.Drawing.Size(122, 17);
-            this.cbxFilterSpace.TabIndex = 6;
-            this.cbxFilterSpace.Text = "过滤包含空格的词";
-            this.cbxFilterSpace.UseVisualStyleBackColor = true;
+            cbxFilterSpace.AutoSize = true;
+            cbxFilterSpace.Location = new System.Drawing.Point(19, 329);
+            cbxFilterSpace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFilterSpace.Name = "cbxFilterSpace";
+            cbxFilterSpace.Size = new System.Drawing.Size(123, 21);
+            cbxFilterSpace.TabIndex = 6;
+            cbxFilterSpace.Text = "过滤包含空格的词";
+            cbxFilterSpace.UseVisualStyleBackColor = true;
             // 
             // cbxFilterPunctuation
             // 
-            this.cbxFilterPunctuation.AutoSize = true;
-            this.cbxFilterPunctuation.Checked = true;
-            this.cbxFilterPunctuation.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbxFilterPunctuation.Location = new System.Drawing.Point(14, 251);
-            this.cbxFilterPunctuation.Name = "cbxFilterPunctuation";
-            this.cbxFilterPunctuation.Size = new System.Drawing.Size(122, 17);
-            this.cbxFilterPunctuation.TabIndex = 7;
-            this.cbxFilterPunctuation.Text = "过滤包含标点的词";
-            this.cbxFilterPunctuation.UseVisualStyleBackColor = true;
+            cbxFilterPunctuation.AutoSize = true;
+            cbxFilterPunctuation.Location = new System.Drawing.Point(19, 381);
+            cbxFilterPunctuation.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFilterPunctuation.Name = "cbxFilterPunctuation";
+            cbxFilterPunctuation.Size = new System.Drawing.Size(123, 21);
+            cbxFilterPunctuation.TabIndex = 7;
+            cbxFilterPunctuation.Text = "过滤包含标点的词";
+            cbxFilterPunctuation.UseVisualStyleBackColor = true;
             // 
             // cbxNoFilter
             // 
-            this.cbxNoFilter.AutoSize = true;
-            this.cbxNoFilter.Location = new System.Drawing.Point(14, 291);
-            this.cbxNoFilter.Name = "cbxNoFilter";
-            this.cbxNoFilter.Size = new System.Drawing.Size(62, 17);
-            this.cbxNoFilter.TabIndex = 8;
-            this.cbxNoFilter.Text = "不过滤";
-            this.cbxNoFilter.UseVisualStyleBackColor = true;
+            cbxNoFilter.AutoSize = true;
+            cbxNoFilter.Location = new System.Drawing.Point(19, 176);
+            cbxNoFilter.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxNoFilter.Name = "cbxNoFilter";
+            cbxNoFilter.Size = new System.Drawing.Size(63, 21);
+            cbxNoFilter.TabIndex = 8;
+            cbxNoFilter.Text = "不过滤";
+            cbxNoFilter.UseVisualStyleBackColor = true;
             // 
             // cbxReplacePunctuation
             // 
-            this.cbxReplacePunctuation.AutoSize = true;
-            this.cbxReplacePunctuation.Location = new System.Drawing.Point(170, 251);
-            this.cbxReplacePunctuation.Name = "cbxReplacePunctuation";
-            this.cbxReplacePunctuation.Size = new System.Drawing.Size(98, 17);
-            this.cbxReplacePunctuation.TabIndex = 11;
-            this.cbxReplacePunctuation.Text = "替换标点部分";
-            this.cbxReplacePunctuation.UseVisualStyleBackColor = true;
+            cbxReplacePunctuation.AutoSize = true;
+            cbxReplacePunctuation.Location = new System.Drawing.Point(199, 381);
+            cbxReplacePunctuation.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxReplacePunctuation.Name = "cbxReplacePunctuation";
+            cbxReplacePunctuation.Size = new System.Drawing.Size(99, 21);
+            cbxReplacePunctuation.TabIndex = 11;
+            cbxReplacePunctuation.Text = "替换标点部分";
+            cbxReplacePunctuation.UseVisualStyleBackColor = true;
             // 
             // cbxReplaceSpace
             // 
-            this.cbxReplaceSpace.AutoSize = true;
-            this.cbxReplaceSpace.Location = new System.Drawing.Point(170, 211);
-            this.cbxReplaceSpace.Name = "cbxReplaceSpace";
-            this.cbxReplaceSpace.Size = new System.Drawing.Size(98, 17);
-            this.cbxReplaceSpace.TabIndex = 10;
-            this.cbxReplaceSpace.Text = "替换空格部分";
-            this.cbxReplaceSpace.UseVisualStyleBackColor = true;
+            cbxReplaceSpace.AutoSize = true;
+            cbxReplaceSpace.Location = new System.Drawing.Point(199, 329);
+            cbxReplaceSpace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxReplaceSpace.Name = "cbxReplaceSpace";
+            cbxReplaceSpace.Size = new System.Drawing.Size(99, 21);
+            cbxReplaceSpace.TabIndex = 10;
+            cbxReplaceSpace.Text = "替换空格部分";
+            cbxReplaceSpace.UseVisualStyleBackColor = true;
             // 
             // cbxReplaceEnglish
             // 
-            this.cbxReplaceEnglish.AutoSize = true;
-            this.cbxReplaceEnglish.Location = new System.Drawing.Point(170, 134);
-            this.cbxReplaceEnglish.Name = "cbxReplaceEnglish";
-            this.cbxReplaceEnglish.Size = new System.Drawing.Size(98, 17);
-            this.cbxReplaceEnglish.TabIndex = 9;
-            this.cbxReplaceEnglish.Text = "替换英文部分";
-            this.cbxReplaceEnglish.UseVisualStyleBackColor = true;
+            cbxReplaceEnglish.AutoSize = true;
+            cbxReplaceEnglish.Location = new System.Drawing.Point(199, 228);
+            cbxReplaceEnglish.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxReplaceEnglish.Name = "cbxReplaceEnglish";
+            cbxReplaceEnglish.Size = new System.Drawing.Size(99, 21);
+            cbxReplaceEnglish.TabIndex = 9;
+            cbxReplaceEnglish.Text = "替换英文部分";
+            cbxReplaceEnglish.UseVisualStyleBackColor = true;
             // 
             // cbxReplaceNumber
             // 
-            this.cbxReplaceNumber.AutoSize = true;
-            this.cbxReplaceNumber.Location = new System.Drawing.Point(170, 173);
-            this.cbxReplaceNumber.Name = "cbxReplaceNumber";
-            this.cbxReplaceNumber.Size = new System.Drawing.Size(98, 17);
-            this.cbxReplaceNumber.TabIndex = 13;
-            this.cbxReplaceNumber.Text = "替换数字部分";
-            this.cbxReplaceNumber.UseVisualStyleBackColor = true;
+            cbxReplaceNumber.AutoSize = true;
+            cbxReplaceNumber.Location = new System.Drawing.Point(199, 279);
+            cbxReplaceNumber.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxReplaceNumber.Name = "cbxReplaceNumber";
+            cbxReplaceNumber.Size = new System.Drawing.Size(99, 21);
+            cbxReplaceNumber.TabIndex = 13;
+            cbxReplaceNumber.Text = "替换数字部分";
+            cbxReplaceNumber.UseVisualStyleBackColor = true;
             // 
             // cbxFilterNumber
             // 
-            this.cbxFilterNumber.AutoSize = true;
-            this.cbxFilterNumber.Checked = true;
-            this.cbxFilterNumber.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbxFilterNumber.Location = new System.Drawing.Point(14, 173);
-            this.cbxFilterNumber.Name = "cbxFilterNumber";
-            this.cbxFilterNumber.Size = new System.Drawing.Size(122, 17);
-            this.cbxFilterNumber.TabIndex = 12;
-            this.cbxFilterNumber.Text = "过滤包含数字的词";
-            this.cbxFilterNumber.UseVisualStyleBackColor = true;
+            cbxFilterNumber.AutoSize = true;
+            cbxFilterNumber.Location = new System.Drawing.Point(19, 279);
+            cbxFilterNumber.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFilterNumber.Name = "cbxFilterNumber";
+            cbxFilterNumber.Size = new System.Drawing.Size(123, 21);
+            cbxFilterNumber.TabIndex = 12;
+            cbxFilterNumber.Text = "过滤包含数字的词";
+            cbxFilterNumber.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 99);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 13);
-            this.label5.TabIndex = 14;
-            this.label5.Text = "保留高词频：";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(14, 129);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(80, 17);
+            label5.TabIndex = 14;
+            label5.Text = "保留高词频：";
             // 
             // numWordRankPercentage
             // 
-            this.numWordRankPercentage.Location = new System.Drawing.Point(96, 94);
-            this.numWordRankPercentage.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numWordRankPercentage.Name = "numWordRankPercentage";
-            this.numWordRankPercentage.Size = new System.Drawing.Size(65, 20);
-            this.numWordRankPercentage.TabIndex = 15;
-            this.numWordRankPercentage.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+            numWordRankPercentage.Location = new System.Drawing.Point(112, 124);
+            numWordRankPercentage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            numWordRankPercentage.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numWordRankPercentage.Name = "numWordRankPercentage";
+            numWordRankPercentage.Size = new System.Drawing.Size(76, 23);
+            numWordRankPercentage.TabIndex = 15;
+            numWordRankPercentage.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(167, 96);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(15, 13);
-            this.label6.TabIndex = 16;
-            this.label6.Text = "%";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(195, 126);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(19, 17);
+            label6.TabIndex = 16;
+            label6.Text = "%";
+            // 
+            // cbxFilterNoAlphabetCode
+            // 
+            cbxFilterNoAlphabetCode.AutoSize = true;
+            cbxFilterNoAlphabetCode.Location = new System.Drawing.Point(19, 435);
+            cbxFilterNoAlphabetCode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFilterNoAlphabetCode.Name = "cbxFilterNoAlphabetCode";
+            cbxFilterNoAlphabetCode.Size = new System.Drawing.Size(135, 21);
+            cbxFilterNoAlphabetCode.TabIndex = 17;
+            cbxFilterNoAlphabetCode.Text = "过滤非字母编码的词";
+            cbxFilterNoAlphabetCode.UseVisualStyleBackColor = true;
+            // 
+            // cbxKeepNumber
+            // 
+            cbxKeepNumber.AutoSize = true;
+            cbxKeepNumber.Location = new System.Drawing.Point(206, 103);
+            cbxKeepNumber.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepNumber.Name = "cbxKeepNumber";
+            cbxKeepNumber.Size = new System.Drawing.Size(159, 21);
+            cbxKeepNumber.TabIndex = 19;
+            cbxKeepNumber.Text = "词条中的数字直接当编码";
+            cbxKeepNumber.UseVisualStyleBackColor = true;
+            cbxKeepNumber.CheckedChanged += cbxKeepNumber_CheckedChanged;
+            // 
+            // cbxKeepEnglish
+            // 
+            cbxKeepEnglish.AutoSize = true;
+            cbxKeepEnglish.Checked = true;
+            cbxKeepEnglish.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxKeepEnglish.Location = new System.Drawing.Point(206, 51);
+            cbxKeepEnglish.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepEnglish.Name = "cbxKeepEnglish";
+            cbxKeepEnglish.Size = new System.Drawing.Size(159, 21);
+            cbxKeepEnglish.TabIndex = 18;
+            cbxKeepEnglish.Text = "词条中的字母直接当编码";
+            cbxKeepEnglish.UseVisualStyleBackColor = true;
+            cbxKeepEnglish.CheckedChanged += cbxKeepEnglish_CheckedChanged;
+            // 
+            // cbxFilterFirstCJK
+            // 
+            cbxFilterFirstCJK.AutoSize = true;
+            cbxFilterFirstCJK.Checked = true;
+            cbxFilterFirstCJK.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxFilterFirstCJK.Location = new System.Drawing.Point(19, 488);
+            cbxFilterFirstCJK.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFilterFirstCJK.Name = "cbxFilterFirstCJK";
+            cbxFilterFirstCJK.Size = new System.Drawing.Size(219, 21);
+            cbxFilterFirstCJK.TabIndex = 20;
+            cbxFilterFirstCJK.Text = "过滤首字非中日韩统一表义字符的词";
+            cbxFilterFirstCJK.UseVisualStyleBackColor = true;
+            // 
+            // cbxKeepNumber_
+            // 
+            cbxKeepNumber_.AutoSize = true;
+            cbxKeepNumber_.Checked = true;
+            cbxKeepNumber_.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxKeepNumber_.Location = new System.Drawing.Point(12, 103);
+            cbxKeepNumber_.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepNumber_.Name = "cbxKeepNumber_";
+            cbxKeepNumber_.Size = new System.Drawing.Size(135, 21);
+            cbxKeepNumber_.TabIndex = 22;
+            cbxKeepNumber_.Text = "词条中的数字不编码";
+            cbxKeepNumber_.UseVisualStyleBackColor = true;
+            cbxKeepNumber_.CheckedChanged += cbxKeepNumber__CheckedChanged;
+            // 
+            // cbxKeepEnglish_
+            // 
+            cbxKeepEnglish_.AutoSize = true;
+            cbxKeepEnglish_.Location = new System.Drawing.Point(12, 51);
+            cbxKeepEnglish_.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepEnglish_.Name = "cbxKeepEnglish_";
+            cbxKeepEnglish_.Size = new System.Drawing.Size(135, 21);
+            cbxKeepEnglish_.TabIndex = 21;
+            cbxKeepEnglish_.Text = "词条中的字母不编码";
+            cbxKeepEnglish_.UseVisualStyleBackColor = true;
+            cbxKeepEnglish_.CheckedChanged += cbxKeepEnglish__CheckedChanged;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(cbxFullWidth);
+            groupBox1.Controls.Add(cbxKeepSpace);
+            groupBox1.Controls.Add(cbxKeepSpace_);
+            groupBox1.Controls.Add(cbxChsNumber);
+            groupBox1.Controls.Add(cbxPrefixEnglish);
+            groupBox1.Controls.Add(cbxKeepPunctuation_);
+            groupBox1.Controls.Add(cbxKeepPunctuation);
+            groupBox1.Controls.Add(cbxKeepNumber_);
+            groupBox1.Controls.Add(cbxKeepEnglish_);
+            groupBox1.Controls.Add(cbxKeepNumber);
+            groupBox1.Controls.Add(cbxKeepEnglish);
+            groupBox1.Location = new System.Drawing.Point(370, 176);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(412, 360);
+            groupBox1.TabIndex = 23;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "词条分段处理";
+            // 
+            // cbxFullWidth
+            // 
+            cbxFullWidth.AutoSize = true;
+            cbxFullWidth.Checked = true;
+            cbxFullWidth.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxFullWidth.Location = new System.Drawing.Point(12, 313);
+            cbxFullWidth.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxFullWidth.Name = "cbxFullWidth";
+            cbxFullWidth.Size = new System.Drawing.Size(267, 21);
+            cbxFullWidth.TabIndex = 29;
+            cbxFullWidth.Text = "全角英语数字和基本符号先转半角再进行编码";
+            cbxFullWidth.UseVisualStyleBackColor = true;
+            // 
+            // cbxKeepSpace
+            // 
+            cbxKeepSpace.AutoSize = true;
+            cbxKeepSpace.Location = new System.Drawing.Point(206, 153);
+            cbxKeepSpace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepSpace.Name = "cbxKeepSpace";
+            cbxKeepSpace.Size = new System.Drawing.Size(159, 21);
+            cbxKeepSpace.TabIndex = 28;
+            cbxKeepSpace.Text = "编码时保留字母后的空格";
+            cbxKeepSpace.UseVisualStyleBackColor = true;
+            // 
+            // cbxKeepSpace_
+            // 
+            cbxKeepSpace_.AutoSize = true;
+            cbxKeepSpace_.Location = new System.Drawing.Point(12, 153);
+            cbxKeepSpace_.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepSpace_.Name = "cbxKeepSpace_";
+            cbxKeepSpace_.Size = new System.Drawing.Size(135, 21);
+            cbxKeepSpace_.TabIndex = 27;
+            cbxKeepSpace_.Text = "词条中的空格不编码";
+            cbxKeepSpace_.UseVisualStyleBackColor = true;
+            // 
+            // cbxChsNumber
+            // 
+            cbxChsNumber.AutoSize = true;
+            cbxChsNumber.Location = new System.Drawing.Point(206, 260);
+            cbxChsNumber.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxChsNumber.Name = "cbxChsNumber";
+            cbxChsNumber.Size = new System.Drawing.Size(159, 21);
+            cbxChsNumber.TabIndex = 26;
+            cbxChsNumber.Text = "数字先转汉字再进行编码";
+            cbxChsNumber.UseVisualStyleBackColor = true;
+            cbxChsNumber.CheckedChanged += cbxChsNumber_CheckedChanged;
+            // 
+            // cbxPrefixEnglish
+            // 
+            cbxPrefixEnglish.AutoSize = true;
+            cbxPrefixEnglish.Checked = true;
+            cbxPrefixEnglish.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxPrefixEnglish.Location = new System.Drawing.Point(12, 260);
+            cbxPrefixEnglish.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxPrefixEnglish.Name = "cbxPrefixEnglish";
+            cbxPrefixEnglish.Size = new System.Drawing.Size(174, 21);
+            cbxPrefixEnglish.TabIndex = 25;
+            cbxPrefixEnglish.Text = "中英文的编码中间用\"_\"分隔";
+            cbxPrefixEnglish.UseVisualStyleBackColor = true;
+            cbxPrefixEnglish.CheckedChanged += cbxPrefixEnglish_CheckedChanged;
+            // 
+            // cbxKeepPunctuation_
+            // 
+            cbxKeepPunctuation_.AutoSize = true;
+            cbxKeepPunctuation_.Checked = true;
+            cbxKeepPunctuation_.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxKeepPunctuation_.Location = new System.Drawing.Point(12, 205);
+            cbxKeepPunctuation_.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepPunctuation_.Name = "cbxKeepPunctuation_";
+            cbxKeepPunctuation_.Size = new System.Drawing.Size(135, 21);
+            cbxKeepPunctuation_.TabIndex = 24;
+            cbxKeepPunctuation_.Text = "词条中的标点不编码";
+            cbxKeepPunctuation_.UseVisualStyleBackColor = true;
+            cbxKeepPunctuation_.CheckedChanged += cbxKeepPunctuation__CheckedChanged;
+            // 
+            // cbxKeepPunctuation
+            // 
+            cbxKeepPunctuation.AutoSize = true;
+            cbxKeepPunctuation.Location = new System.Drawing.Point(206, 205);
+            cbxKeepPunctuation.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            cbxKeepPunctuation.Name = "cbxKeepPunctuation";
+            cbxKeepPunctuation.Size = new System.Drawing.Size(159, 21);
+            cbxKeepPunctuation.TabIndex = 23;
+            cbxKeepPunctuation.Text = "词条中的标点直接当编码";
+            cbxKeepPunctuation.UseVisualStyleBackColor = true;
+            cbxKeepPunctuation.CheckedChanged += cbxKeepPunctuator_CheckedChanged;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Location = new System.Drawing.Point(184, 176);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(175, 250);
+            groupBox2.TabIndex = 24;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "词条字符替换";
             // 
             // FilterConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(281, 323);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.numWordRankPercentage);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.cbxReplaceNumber);
-            this.Controls.Add(this.cbxFilterNumber);
-            this.Controls.Add(this.cbxReplacePunctuation);
-            this.Controls.Add(this.cbxReplaceSpace);
-            this.Controls.Add(this.cbxReplaceEnglish);
-            this.Controls.Add(this.cbxNoFilter);
-            this.Controls.Add(this.cbxFilterPunctuation);
-            this.Controls.Add(this.cbxFilterSpace);
-            this.Controls.Add(this.cbxFilterEnglish);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.numWordRankTo);
-            this.Controls.Add(this.numWordRankFrom);
-            this.Controls.Add(this.numWordLengthTo);
-            this.Controls.Add(this.numWordLengthFrom);
-            this.Controls.Add(this.btnOK);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "FilterConfigForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "词条过滤设置";
-            this.Load += new System.EventHandler(this.FilterConfigForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numWordLengthFrom)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordLengthTo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordRankFrom)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordRankTo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numWordRankPercentage)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(795, 550);
+            Controls.Add(groupBox1);
+            Controls.Add(cbxFilterFirstCJK);
+            Controls.Add(cbxFilterNoAlphabetCode);
+            Controls.Add(label6);
+            Controls.Add(numWordRankPercentage);
+            Controls.Add(label5);
+            Controls.Add(cbxReplaceNumber);
+            Controls.Add(cbxFilterNumber);
+            Controls.Add(cbxReplacePunctuation);
+            Controls.Add(cbxReplaceSpace);
+            Controls.Add(cbxReplaceEnglish);
+            Controls.Add(cbxNoFilter);
+            Controls.Add(cbxFilterPunctuation);
+            Controls.Add(cbxFilterSpace);
+            Controls.Add(cbxFilterEnglish);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(numWordRankTo);
+            Controls.Add(numWordRankFrom);
+            Controls.Add(numWordLengthTo);
+            Controls.Add(numWordLengthFrom);
+            Controls.Add(btnOK);
+            Controls.Add(groupBox2);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "FilterConfigForm";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "词条过滤设置";
+            Load += FilterConfigForm_Load;
+            ((System.ComponentModel.ISupportInitialize)numWordLengthFrom).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numWordLengthTo).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numWordRankFrom).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numWordRankTo).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numWordRankPercentage).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -364,5 +575,20 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numWordRankPercentage;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox cbxFilterNoAlphabetCode;
+        private System.Windows.Forms.CheckBox cbxKeepNumber;
+        private System.Windows.Forms.CheckBox cbxKeepEnglish;
+        private System.Windows.Forms.CheckBox cbxFilterFirstCJK;
+        private System.Windows.Forms.CheckBox cbxKeepNumber_;
+        private System.Windows.Forms.CheckBox cbxKeepEnglish_;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox cbxKeepPunctuation;
+        private System.Windows.Forms.CheckBox cbxPrefixEnglish;
+        private System.Windows.Forms.CheckBox cbxKeepPunctuation_;
+        private System.Windows.Forms.CheckBox cbxChsNumber;
+        private System.Windows.Forms.CheckBox cbxKeepSpace_;
+        private System.Windows.Forms.CheckBox cbxKeepSpace;
+        private System.Windows.Forms.CheckBox cbxFullWidth;
     }
 }
