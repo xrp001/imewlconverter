@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Studyzy.IMEWLConverter.Helpers;
+using ImeWlConverter.Core.Helpers;
 
 namespace ImeWlConverterMac.Views;
 
@@ -101,7 +101,7 @@ public partial class MergeWLWindow : Window
 
     private async void PerformMerge()
     {
-        var mainWL = FileOperationHelper.ReadFile(txbMainWLFile.Text);
+        var mainWL = FileOperationHelper.ReadFile(txbMainWLFile.Text ?? "");
         var mainDict = ConvertTxt2Dictionary(mainWL);
         var userFiles = (txbUserWLFiles.Text ?? "").Split('|');
 

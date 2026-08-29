@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Studyzy.IMEWLConverter.Helpers;
+using ImeWlConverter.Core.Helpers;
 
 namespace ImeWlConverterMac.Views;
 
@@ -82,8 +82,9 @@ public partial class SplitFileWindow : Window
 
     private void SplitFileByLine(int maxLine)
     {
-        var encoding = FileOperationHelper.GetEncodingType(txbFilePath.Text);
-        var str = FileOperationHelper.ReadFile(txbFilePath.Text, encoding);
+        var filePath = txbFilePath.Text ?? "";
+        var encoding = FileOperationHelper.GetEncodingType(filePath);
+        var str = FileOperationHelper.ReadFile(filePath, encoding);
 
         var splitLineChar = "\r\n";
         if (str.IndexOf(splitLineChar) < 0)
@@ -127,7 +128,8 @@ public partial class SplitFileWindow : Window
 
     private void SplitFileBySize(int maxSize)
     {
-        var encoding = FileOperationHelper.GetEncodingType(txbFilePath.Text);
+        var filePath = txbFilePath.Text ?? "";
+        var encoding = FileOperationHelper.GetEncodingType(filePath);
         var fileIndex = 1;
         var size = (maxSize - 10) * 1024; // 10K的Buffer
 
@@ -192,8 +194,9 @@ public partial class SplitFileWindow : Window
     private void SplitFileByLength(int length)
     {
         length = length - 100; // 100个字的Buffer
-        var encoding = FileOperationHelper.GetEncodingType(txbFilePath.Text);
-        var str = FileOperationHelper.ReadFile(txbFilePath.Text, encoding);
+        var filePath = txbFilePath.Text ?? "";
+        var encoding = FileOperationHelper.GetEncodingType(filePath);
+        var str = FileOperationHelper.ReadFile(filePath, encoding);
         var fileIndex = 1;
 
         do

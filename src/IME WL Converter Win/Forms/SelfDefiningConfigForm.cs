@@ -1,16 +1,16 @@
 /*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
-
+ *
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
-
+ *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
-
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,31 +21,45 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.IME;
+using ImeWlConverter.Abstractions.Enums;
+using ImeWlConverter.Core.Helpers;
 
 namespace Studyzy.IMEWLConverter;
+
+/// <summary>
+/// Local ParsePattern DTO for self-defining format configuration.
+/// </summary>
+public class ParsePattern
+{
+    public bool ContainRank { get; set; }
+    public bool ContainCode { get; set; }
+    public string CodeSplitString { get; set; } = ",";
+    public BuildType CodeSplitType { get; set; } = BuildType.None;
+    public List<int> Sort { get; set; } = new() { 1, 2, 3 };
+    public string SplitString { get; set; } = " ";
+    public string LineSplitString { get; set; } = "\r\n";
+    public CodeType CodeType { get; set; } = CodeType.Pinyin;
+    public System.Text.Encoding? TextEncoding { get; set; }
+    public string? MappingTablePath { get; set; }
+    public bool IsPinyinFormat { get; set; }
+    public string? MutiWordCodeFormat { get; set; }
+}
 
 public partial class SelfDefiningConfigForm : Form
 {
     private readonly List<string> fromWords = new();
 
-    private readonly SelfDefining ime = new();
-
-    //private bool isImport = true;
-
     public SelfDefiningConfigForm()
     {
         InitializeComponent();
         InitParsePattern();
-        //IsImport = true;
     }
 
     /// <summary>
     ///     用户自定义的匹配模式
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ParsePattern SelectedParsePattern { get; set; }
+    public ParsePattern SelectedParsePattern { get; set; } = new();
 
     private void InitParsePattern()
     {
@@ -145,30 +159,17 @@ public partial class SelfDefiningConfigForm : Form
 
     private void ShowSample()
     {
+        // Basic format preview
         if (ReBuildUserPattern())
         {
-            ime.UserDefiningPattern = SelectedParsePattern;
-            rtbTo.Text = ime.Export(SampleWL())[0];
+            var sample = "示例: ";
+            if (SelectedParsePattern.ContainCode)
+                sample += "编码" + SelectedParsePattern.SplitString;
+            sample += "汉字";
+            if (SelectedParsePattern.ContainRank)
+                sample += SelectedParsePattern.SplitString + "词频";
+            rtbTo.Text = sample;
         }
-    }
-
-    private WordLibraryList SampleWL()
-    {
-        var list = new WordLibraryList();
-        var lines = rtbFrom.Text.Split(
-            new[] { '\r', '\n' },
-            StringSplitOptions.RemoveEmptyEntries
-        );
-        foreach (var line in lines)
-            list.Add(
-                new WordLibrary
-                {
-                    Word = line,
-                    Rank = 1234,
-                    CodeType = CodeType.NoCode
-                }
-            );
-        return list;
     }
 
     private void cbxIncludeCipin_CheckedChanged(object sender, EventArgs e)
@@ -222,8 +223,8 @@ public partial class SelfDefiningConfigForm : Form
     {
         var sort = new List<int>();
         var a = (int)numOrderPinyin.Value * 10;
-        var b = (int)numOrderHanzi.Value * 10 + 1; //善重复键值问题
-        var c = (int)numOrderCipin.Value * 10 + 2; //善重复键值问题
+        var b = (int)numOrderHanzi.Value * 10 + 1;
+        var c = (int)numOrderCipin.Value * 10 + 2;
         sort.Add(a);
         sort.Add(b);
         sort.Add(c);
@@ -275,30 +276,6 @@ code_a4=p11+p21+p31+n11";
     {
         ShowSample();
     }
-
-    //private IWordCodeGenerater pyFactory = new PinyinGenerater();
-    //private SelfDefiningCodeGenerater selfFactory = new SelfDefiningCodeGenerater();
-    //private void GenerateCode( WordLibrary wl)
-    //{
-    //    var word = wl.Word;
-    //    if (SelectedParsePattern.IsPinyin&&SelectedParsePattern.IsPinyinFormat)
-    //    {
-    //        var py = pyFactory.GetCodeOfString(word, SelectedParsePattern.CodeSplitString);
-    //        wl.PinYin = CollectionHelper.ToArray(py);
-    //    }
-    //    else
-    //    {
-    //        if (!string.IsNullOrEmpty(SelectedParsePattern.MappingTablePath))
-    //        {
-    //            SelectedParsePattern.MappingTable = UserCodingHelper.GetCodingDict(SelectedParsePattern.MappingTablePath);
-    //        }
-    //        selfFactory.MappingDictionary = SelectedParsePattern.MappingTable;
-    //        selfFactory.Is1Char1Code = SelectedParsePattern.IsPinyinFormat;
-    //        selfFactory.MutiWordCodeFormat = SelectedParsePattern.MutiWordCodeFormat;
-    //        wl.SetCode(CodeType.UserDefine, selfFactory.GetCodeOfString(word, SelectedParsePattern.CodeSplitString));
-    //    }
-
-    //}
 
     private void cbxCodeType_SelectedIndexChanged(object sender, EventArgs e)
     {

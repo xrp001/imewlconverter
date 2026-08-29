@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,44 +15,33 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Diagnostics;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.Generaters;
+using Xunit;
+using ImeWlConverter.Abstractions.Contracts;
+using ImeWlConverter.Core.CodeGeneration.Generators;
 
 namespace Studyzy.IMEWLConverter.Test.GeneraterTest;
 
-internal class TerraPinyinTest
+public class TerraPinyinTest
 {
-    private readonly IWordCodeGenerater generater = new TerraPinyinGenerater();
+    private readonly ICodeGenerator generator = new TerraPinyinCodeGenerator();
 
-    [Test]
+    [Fact]
     public void TestPinyin2TerraPinyin()
     {
-        var wl = new WordLibrary
-        {
-            Word = "深蓝",
-            Rank = 123,
-            PinYin = new[] { "shen", "lan" },
-            CodeType = CodeType.Pinyin
-        };
-        generater.GetCodeOfWordLibrary(wl);
-        foreach (var py in wl.Codes) Debug.WriteLine(py);
+        var result = generator.GenerateCode("深蓝");
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Segments.Count);
     }
 
-    [TestCase("曾经", "ceng2 jin1")]
-    [TestCase("曾毅", "zeng1 yi4")]
-    [TestCase("音乐", "yin1 yue4")]
-    [TestCase("快乐", "kuai4 le4")]
+    [Theory]
+    [InlineData("曾经", "ceng2 jing1")]
+    [InlineData("曾毅", "zeng1 yi4")]
+    [InlineData("音乐", "yin1 yue4")]
+    [InlineData("快乐", "kuai4 le4")]
     public void TestChar2TerraPinyin(string word, string pinyin)
     {
-        var wl = new WordLibrary
-        {
-            Word = word,
-            Rank = 123,
-            CodeType = CodeType.NoCode
-        };
-        generater.GetCodeOfWordLibrary(wl);
-        foreach (var py in wl.Codes.ToCodeString(" ")) Debug.WriteLine(py);
+        var result = generator.GenerateCode(word);
+        var primaryCode = result.GetPrimaryCode(" ");
+        Assert.Equal(pinyin, primaryCode);
     }
 }

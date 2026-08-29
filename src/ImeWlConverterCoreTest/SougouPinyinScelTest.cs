@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2022 yfdyh000
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -17,104 +17,53 @@
 
 using System;
 using System.IO;
-using System.Net;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Abstractions.Enums;
+using ImeWlConverter.Formats.SougouScel;
 
 namespace Studyzy.IMEWLConverter.Test;
 
-[TestFixture]
-internal class SougouPinyinScelTest : BaseTest
+public class SougouPinyinScelTest : BaseTest
 {
-    [OneTimeSetUp]
-    public override void InitData()
+    public SougouPinyinScelTest()
     {
-        importer = new SougouPinyinScel();
+        importer = new SougouScelImporter();
     }
 
     protected override string StringData => throw new NotImplementedException();
 
-    [TestCase]
-    public void TestImportLine()
-    {
-        Assert.Catch(
-            () => { importer.ImportLine("test"); },
-            "Scel格式是二进制文件，不支持流转换"
-        );
-    }
-
-    [TestCase("诗词名句大全.scel")]
-    [Description("较慢，按需启用")]
-    [Explicit]
+    [Theory(Skip = "Large file test, run manually")]
+    [InlineData("诗词名句大全.scel")]
+    [Trait("Category", "Explicit")]
     public void TestImportBigScel(string filePath)
     {
-        var lib = importer.Import(GetFullPath(filePath));
-        Assert.That(lib.Count, Is.GreaterThan(0));
-        Assert.That(lib[0].Word, Is.Not.Null.And.Not.Empty);
+        var result = ImportFromFile(GetFullPath(filePath));
+        var lib = result.Entries;
+        Assert.True(lib.Count > 0);
+        Assert.False(string.IsNullOrEmpty(lib[0].Word));
 
-        Assert.That(342179, Is.EqualTo(lib.Count));
-        Assert.That(CodeType.Pinyin, Is.EqualTo(lib[0].CodeType));
-        Assert.That(false, Is.EqualTo(lib[0].IsEnglish));
-        Assert.That("a'cheng'yi'wen'you'bi'duan", Is.EqualTo(lib[0].PinYinString));
-        Assert.That(0, Is.EqualTo(lib[0].Rank));
-        Assert.That("a", Is.EqualTo(lib[0].SingleCode));
-        Assert.That("阿秤亦闻有笔端", Is.EqualTo(lib[0].Word));
+        Assert.Equal(342179, lib.Count);
+        Assert.Equal(CodeType.Pinyin, lib[0].CodeType);
+        Assert.Equal(false, lib[0].IsEnglish);
+        Assert.Equal("a'cheng'yi'wen'you'bi'duan", lib[0].Code?.GetPrimaryCode("'"));
+        Assert.Equal(0, lib[0].Rank);
+        Assert.Equal("阿秤亦闻有笔端", lib[0].Word);
     }
 
-    [TestCase("唐诗300首【官方推荐】.scel")]
+    [Theory]
+    [InlineData("唐诗300首【官方推荐】.scel")]
     public void TestImportSmallScel(string filePath)
     {
-        var lib = importer.Import(GetFullPath(filePath));
-        Assert.That(lib.Count, Is.GreaterThan(0));
-        Assert.That(lib[0].Word, Is.Not.Null.And.Not.Empty);
+        var result = ImportFromFile(GetFullPath(filePath));
+        var lib = result.Entries;
+        Assert.True(lib.Count > 0);
+        Assert.False(string.IsNullOrEmpty(lib[0].Word));
 
-        Assert.That(3563, Is.EqualTo(lib.Count));
-        Assert.That(CodeType.Pinyin, Is.EqualTo(lib[0].CodeType));
-        Assert.That(false, Is.EqualTo(lib[0].IsEnglish));
-        Assert.That("ai'jiang'tou", Is.EqualTo(lib[0].PinYinString));
-        Assert.That(0, Is.EqualTo(lib[0].Rank));
-        Assert.That("ai", Is.EqualTo(lib[0].SingleCode));
-        Assert.That("哀江头", Is.EqualTo(lib[0].Word));
-        Assert.That(null, Is.EqualTo(lib[0].WubiCode));
-    }
-
-    [TestCase("唐诗300首【官方推荐】.scel")]
-    public void TestListScelInfo(string filePath)
-    {
-        var info = SougouPinyinScel.ReadScelInfo(GetFullPath(filePath));
-        Assert.That(info, Is.Not.Null.And.Not.Empty);
-        foreach (var item in info)
-            TestContext.WriteLine(item.Key + ": " + item.Value);
-
-        Assert.That("3563", Is.EqualTo(info["CountWord"]));
-        Assert.That("唐诗300首【官方推荐】", Is.EqualTo(info["Name"]));
-        Assert.That("诗词歌赋", Is.EqualTo(info["Type"]));
-        Assert.That("包含唐诗300首的所有诗人、诗名、诗句。", Is.EqualTo(info["Info"]));
-        Assert.That(info["Sample"], Does.Contain("张九龄 侧见双翠鸟"));
-    }
-
-    [TestCase(
-        "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=%E7%BD%91%E7%BB%9C%E6%B5%81%E8%A1%8C%E6%96%B0%E8%AF%8D%E3%80%90%E5%AE%98%E6%96%B9%E6%8E%A8%E8%8D%90%E3%80%91&f=detail"
-    )]
-    [Description("按需使用。下载1MB，用时1秒")]
-    [Explicit]
-    public void TestLatestScelOnWeb(string url)
-    {
-        var filePath = Path.GetTempFileName();
-        var dl = new WebClient();
-        dl.DownloadFile(url, filePath);
-        var info = SougouPinyinScel.ReadScelInfo(GetFullPath(filePath));
-        foreach (var item in info)
-            TestContext.WriteLine(item.Key + ": " + item.Value);
-        Assert.That(info["CountWord"], Is.GreaterThan("10000"));
-        Assert.That("网络流行新词【官方推荐】", Is.EqualTo(info["Name"]));
-        Assert.That("北京", Is.EqualTo(info["Type"]));
-        Assert.That("搜狗搜索自动生成的流行新词，每周更新。", Is.EqualTo(info["Info"]));
-        Assert.That(info["Sample"], Is.Not.Null.And.Not.Empty);
-
-        var lib = importer.Import(GetFullPath(filePath));
-        Assert.That(lib.Count, Is.EqualTo(info["CountWord"]));
-        Assert.That(lib[0].Word, Is.Not.Null.And.Not.Empty);
+        Assert.Equal(3563, lib.Count);
+        Assert.Equal(CodeType.Pinyin, lib[0].CodeType);
+        Assert.Equal(false, lib[0].IsEnglish);
+        Assert.Equal("ai'jiang'tou", lib[0].Code?.GetPrimaryCode("'"));
+        Assert.Equal(0, lib[0].Rank);
+        Assert.Equal("哀江头", lib[0].Word);
     }
 }

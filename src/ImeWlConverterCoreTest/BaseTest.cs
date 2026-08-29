@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,25 +15,30 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
+using System.Reflection;
+using ImeWlConverter.Abstractions.Contracts;
+using ImeWlConverter.Abstractions.Enums;
+using ImeWlConverter.Abstractions.Models;
+using ImeWlConverter.Abstractions.Results;
 
 namespace Studyzy.IMEWLConverter.Test;
 
 public abstract class BaseTest
 {
-    protected IWordLibraryExport exporter;
-    protected IWordLibraryImport importer;
+    protected IFormatExporter? exporter;
+    protected IFormatImporter? importer;
 
     /// <summary>
     ///     深蓝测试
     /// </summary>
-    protected WordLibrary WlData = new()
+    protected WordEntry WlData = new()
     {
         Rank = 10,
-        PinYin = new[] { "shen", "lan", "ce", "shi" },
-        Word = "深蓝测试"
+        Code = WordCode.FromSingle(new[] { "shen", "lan", "ce", "shi" }),
+        Word = "深蓝测试",
+        CodeType = CodeType.Pinyin
     };
 
     protected abstract string StringData { get; }
@@ -42,24 +47,35 @@ public abstract class BaseTest
     ///     深蓝测试
     ///     词库转换
     /// </summary>
-    protected WordLibraryList WlListData
+    protected IReadOnlyList<WordEntry> WlListData
     {
         get
         {
-            var wordLibrary = new WordLibrary
+            var wordEntry = new WordEntry
             {
                 Rank = 80,
-                PinYin = new[] { "ci", "ku", "zhuan", "huan" },
-                Word = "词库转换"
+                Code = WordCode.FromSingle(new[] { "ci", "ku", "zhuan", "huan" }),
+                Word = "词库转换",
+                CodeType = CodeType.Pinyin
             };
-            return new WordLibraryList { WlData, wordLibrary };
+            return new List<WordEntry> { WlData, wordEntry };
         }
     }
 
-    public abstract void InitData();
-
     protected string GetFullPath(string fileName)
     {
-        return Path.Combine(TestContext.CurrentContext.TestDirectory, "Test", fileName);
+        var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        return Path.Combine(assemblyLocation!, "Test", fileName);
+    }
+
+    protected ImportResult ImportFromFile(string filePath)
+    {
+        using var stream = File.OpenRead(filePath);
+        return importer!.ImportAsync(stream).GetAwaiter().GetResult();
+    }
+
+    protected ExportResult ExportToStream(IReadOnlyList<WordEntry> entries, Stream output)
+    {
+        return exporter!.ExportAsync(entries, output).GetAwaiter().GetResult();
     }
 }

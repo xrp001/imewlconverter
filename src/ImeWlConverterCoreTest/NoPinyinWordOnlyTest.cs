@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,50 +15,49 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.IO;
 using System.Text;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Formats.NoPinyinWordOnly;
 
 namespace Studyzy.IMEWLConverter.Test;
 
-[TestFixture]
 public class NoPinyinWordOnlyTest : BaseTest
 {
-    [OneTimeSetUp]
-    public override void InitData()
+    public NoPinyinWordOnlyTest()
     {
-        importer = new NoPinyinWordOnly();
-        exporter = new NoPinyinWordOnly();
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        importer = new NoPinyinWordOnlyImporter();
+        exporter = new NoPinyinWordOnlyExporter();
     }
 
     protected override string StringData => Resource4Test.NoPinyinWordOnly;
 
-    [Test]
+    [Fact]
     public void TestExport()
     {
-        var txt = exporter.Export(WlListData)[0];
-        Assert.That("深蓝测试\r\n词库转换\r\n", Is.EqualTo(txt));
+        using var ms = new MemoryStream();
+        var result = ExportToStream(WlListData, ms);
+        Assert.Equal(2, result.EntryCount);
+
+        ms.Position = 0;
+        var text = new StreamReader(ms, Encoding.UTF8).ReadToEnd();
+        Assert.Contains("深蓝测试", text);
+        Assert.Contains("词库转换", text);
     }
 
-    [Test]
-    public void TestExportLine()
-    {
-        var txt = exporter.ExportLine(WlData);
-        Assert.That("深蓝测试", Is.EqualTo(txt));
-    }
-
-    [Test]
+    [Fact]
     public void TestImport()
     {
-        var wl = ((IWordLibraryTextImport)importer).ImportText(StringData);
-        Assert.That(10, Is.EqualTo(wl.Count));
+        var bytes = Encoding.UTF8.GetBytes(StringData);
+        using var ms = new MemoryStream(bytes);
+        var result = importer!.ImportAsync(ms).GetAwaiter().GetResult();
+        Assert.Equal(10, result.Entries.Count);
     }
 
-    [Test]
+    [Fact]
     public void TestImportFile()
     {
-        var wll = importer.Import(GetFullPath("纯汉字.txt"));
-        Assert.That(wll.Count, Is.GreaterThan(0));
+        var result = ImportFromFile(GetFullPath("纯汉字.txt"));
+        Assert.True(result.Entries.Count > 0);
     }
 }

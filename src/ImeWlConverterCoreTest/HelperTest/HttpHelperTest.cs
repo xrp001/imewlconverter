@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,17 +15,18 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Helpers;
+using Xunit;
+using ImeWlConverter.Core.Helpers;
 
 namespace Studyzy.IMEWLConverter.Test.HelperTest;
 
-internal class HttpHelperTest
+public class HttpHelperTest
 {
-    [TestCase("http://www.baidu.com", "百度一下")]
+    [Theory]
+    [InlineData("http://www.baidu.com", "百度一下")]
     public void TestWriteFile(string url, string keyword)
     {
         var html = HttpHelper.GetHtml(url);
-        Assert.That(html, Does.Contain(keyword));
+        Assert.Contains(keyword, html);
     }
 }

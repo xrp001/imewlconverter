@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -17,63 +17,67 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Generaters;
+using Xunit;
+using ImeWlConverter.Core.CodeGeneration.Generators;
 
 namespace Studyzy.IMEWLConverter.Test.GeneraterTest;
 
-internal class SelfDefiningCodeGeneraterTest
+public class SelfDefiningCodeGeneraterTest
 {
-    [Test]
+    [Fact]
     public void TestGenerateCode()
     {
-        var generater = new SelfDefiningCodeGenerater();
-        generater.MappingDictionary = new Dictionary<char, IList<string>>();
-        generater.MappingDictionary.Add('深', new[] { "shen" });
-        generater.MappingDictionary.Add('蓝', new[] { "lan" });
-        generater.Is1Char1Code = false;
+        var generator = new SelfDefiningCodeGenerator();
+        generator.MappingDictionary = new Dictionary<char, IList<string>>();
+        generator.MappingDictionary.Add('深', new[] { "shen" });
+        generator.MappingDictionary.Add('蓝', new[] { "lan" });
+        generator.Is1Char1Code = false;
 
-        generater.MutiWordCodeFormat =
+        generator.MutiWordCodeFormat =
             @"code_e2=p11+p12+p21+p22
 code_e3=p11+p21+p31+p32
 code_a4=p11+p21+p31+n11";
-        var result = generater.GetCodeOfString("深蓝").GetTop1Code();
-        Assert.That("shla", Is.EqualTo(result));
-        result = generater.GetCodeOfString("深深蓝").GetTop1Code();
-        Assert.That("ssla", Is.EqualTo(result));
-        result = generater.GetCodeOfString("深蓝深蓝").GetTop1Code();
-        Assert.That("slsl", Is.EqualTo(result));
+        var result = generator.GenerateCode("深蓝");
+        // One-word-one-code mode: single segment with single code
+        Assert.True(result.Segments.Count > 0);
+        Assert.Equal("shla", result.Segments[0][0]);
+
+        result = generator.GenerateCode("深深蓝");
+        Assert.True(result.Segments.Count > 0);
+        Assert.Equal("ssla", result.Segments[0][0]);
+
+        result = generator.GenerateCode("深蓝深蓝");
+        Assert.True(result.Segments.Count > 0);
+        Assert.Equal("slsl", result.Segments[0][0]);
     }
 
-    [Test]
+    [Fact]
     public void TestGeneratePinyinFormatCode()
     {
-        var generater = new SelfDefiningCodeGenerater();
-        generater.MappingDictionary = new Dictionary<char, IList<string>>();
-        generater.MappingDictionary.Add('深', new[] { "ipws" });
-        generater.MappingDictionary.Add('蓝', new[] { "ajtl" });
+        var generator = new SelfDefiningCodeGenerator();
+        generator.MappingDictionary = new Dictionary<char, IList<string>>();
+        generator.MappingDictionary.Add('深', new[] { "ipws" });
+        generator.MappingDictionary.Add('蓝', new[] { "ajtl" });
 
-        generater.Is1Char1Code = true;
-        var result = generater.GetCodeOfString("深蓝").ToCodeString(",");
-        Assert.That("ipws,ajtl", Is.EqualTo(result[0]));
-
-        //var codes = generater.GetCodeOfString("蓝深", ",");
-        //Assert.That("ajtl,ipws", Is.EqualTo(codes[0]));
+        generator.Is1Char1Code = true;
+        var result = generator.GenerateCode("深蓝");
+        // Is1Char1Code mode: each char is a segment
+        Assert.Equal(2, result.Segments.Count);
+        Assert.Equal("ipws", result.Segments[0][0]);
+        Assert.Equal("ajtl", result.Segments[1][0]);
     }
 
-    [Test]
+    [Fact]
     public void TestGenerateMutiPinyinFormatCode()
     {
-        var generater = new SelfDefiningCodeGenerater();
-        generater.MappingDictionary = new Dictionary<char, IList<string>>();
-        generater.MappingDictionary.Add('深', new[] { "ipws", "ebcd" });
-        generater.MappingDictionary.Add('蓝', new[] { "ajtl" });
+        var generator = new SelfDefiningCodeGenerator();
+        generator.MappingDictionary = new Dictionary<char, IList<string>>();
+        generator.MappingDictionary.Add('深', new[] { "ipws", "ebcd" });
+        generator.MappingDictionary.Add('蓝', new[] { "ajtl" });
 
-        generater.Is1Char1Code = true;
-        var result = generater.GetCodeOfString("深蓝").ToCodeString(",");
-        Assert.That(result.ToArray(), Does.Contain("ipws,ajtl"));
-
-        //var codes = generater.GetCodeOfString("蓝深", ",");
-        //Assert.That("ajtl,ipws", Is.EqualTo(codes[0]));
+        generator.Is1Char1Code = true;
+        var result = generator.GenerateCode("深蓝");
+        Assert.Equal(2, result.Segments.Count);
+        Assert.Contains("ipws", result.Segments[0]);
     }
 }

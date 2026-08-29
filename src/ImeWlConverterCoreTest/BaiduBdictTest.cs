@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,27 +16,26 @@
  */
 
 using System;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Formats.BaiduBdict;
 
 namespace Studyzy.IMEWLConverter.Test;
 
-[TestFixture]
-internal class BaiduBdictTest : BaseTest
+public class BaiduBdictTest : BaseTest
 {
-    [OneTimeSetUp]
-    public override void InitData()
+    public BaiduBdictTest()
     {
-        importer = new BaiduPinyinBdict();
+        importer = new BaiduBdictImporter();
     }
 
     protected override string StringData => throw new NotImplementedException();
 
-    [TestCase("movie.bdict")]
+    [Theory]
+    [InlineData("movie.bdict")]
     public void TestImport(string file)
     {
-        var wlList = importer.Import(GetFullPath(file));
-        Assert.That(wlList, Is.Not.Null);
-        Assert.That(wlList.Count, Is.GreaterThan(0));
+        var result = ImportFromFile(GetFullPath(file));
+        Assert.NotNull(result.Entries);
+        Assert.True(result.Entries.Count > 0);
     }
 }

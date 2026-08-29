@@ -1,70 +1,44 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Studyzy.IMEWLConverter.Generaters;
 
 namespace ImeWlConverterMac.Views;
 
 public partial class WordRankGenerateWindow : Window
 {
-    public IWordRankGenerater WordRankGenerater { get; private set; }
+    public int DefaultRank { get; private set; } = 1;
+    public bool ForceOverride { get; private set; }
+    public string SelectedMode { get; private set; } = "default";
 
     public WordRankGenerateWindow()
     {
         InitializeComponent();
-        WordRankGenerater = new DefaultWordRankGenerater();
-        LoadConfig();
-    }
-
-    public WordRankGenerateWindow(IWordRankGenerater currentGenerater)
-    {
-        InitializeComponent();
-        WordRankGenerater = currentGenerater;
         LoadConfig();
     }
 
     private void LoadConfig()
     {
-        if (WordRankGenerater is DefaultWordRankGenerater defaultGen)
-        {
-            rbtnDefault.IsChecked = true;
-            numRank.Value = (int)defaultGen.Rank;
-        }
-        else if (WordRankGenerater is GoogleWordRankGenerater)
-        {
-            rbtnGoogle.IsChecked = true;
-        }
-        else if (WordRankGenerater is BaiduWordRankGenerater)
-        {
-            rbtnBaidu.IsChecked = true;
-        }
-        else if (WordRankGenerater is CalcWordRankGenerater)
-        {
-            rbtnCalc.IsChecked = true;
-        }
-
-        cbxForceUseNewRank.IsChecked = WordRankGenerater.ForceUse;
+        rbtnDefault.IsChecked = true;
+        numRank.Value = DefaultRank;
+        cbxForceUseNewRank.IsChecked = ForceOverride;
     }
 
     private void BtnOK_Click(object? sender, RoutedEventArgs e)
     {
         if (rbtnDefault.IsChecked == true)
         {
-            WordRankGenerater = new DefaultWordRankGenerater { Rank = (int)(numRank.Value ?? 0) };
+            SelectedMode = "default";
+            DefaultRank = (int)(numRank.Value ?? 1);
         }
-        else if (rbtnGoogle.IsChecked == true)
+        else if (rbtnLlm.IsChecked == true)
         {
-            WordRankGenerater = new GoogleWordRankGenerater();
-        }
-        else if (rbtnBaidu.IsChecked == true)
-        {
-            WordRankGenerater = new BaiduWordRankGenerater();
+            SelectedMode = "llm";
         }
         else if (rbtnCalc.IsChecked == true)
         {
-            WordRankGenerater = new CalcWordRankGenerater();
+            SelectedMode = "calc";
         }
 
-        WordRankGenerater.ForceUse = cbxForceUseNewRank.IsChecked ?? false;
+        ForceOverride = cbxForceUseNewRank.IsChecked ?? false;
 
         Close(true);
     }

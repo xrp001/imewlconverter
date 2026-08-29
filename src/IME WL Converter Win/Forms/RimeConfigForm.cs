@@ -1,16 +1,16 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
-
+ *
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
-
+ *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
-
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -18,9 +18,19 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Studyzy.IMEWLConverter.Entities;
+using ImeWlConverter.Abstractions.Enums;
 
 namespace Studyzy.IMEWLConverter;
+
+/// <summary>
+/// OperationSystem enum for Rime configuration.
+/// </summary>
+public enum OperationSystem
+{
+    Windows,
+    MacOS,
+    Linux
+}
 
 public partial class RimeConfigForm : Form
 {
@@ -31,7 +41,7 @@ public partial class RimeConfigForm : Form
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public CodeType SelectedCodeType { get; set; }
-    
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public OperationSystem SelectedOS { get; set; }
 
@@ -43,13 +53,13 @@ public partial class RimeConfigForm : Form
                 SelectedCodeType = CodeType.Pinyin;
                 break;
             case "五笔":
-                SelectedCodeType = CodeType.Wubi;
+                SelectedCodeType = CodeType.Wubi86;
                 break;
             case "注音":
                 SelectedCodeType = CodeType.TerraPinyin;
                 break;
             case "仓颉":
-                SelectedCodeType = CodeType.Cangjie;
+                SelectedCodeType = CodeType.Cangjie5;
                 break;
             case "其他":
                 SelectedCodeType = CodeType.Unknown;

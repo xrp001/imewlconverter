@@ -10,9 +10,12 @@ dotnet clean
 # 发布应用程序
 dotnet publish -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=false
 
+# 从 csproj 中读取 TargetFramework
+TFM=$(grep '<TargetFramework>' ImeWlConverterMac.csproj | sed 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/')
+
 # 创建 App Bundle 结构
 APP_NAME="深蓝词库转换.app"
-BUILD_DIR="bin/Release/net8.0/osx-arm64/publish"
+BUILD_DIR="bin/Release/${TFM}/osx-arm64/publish"
 APP_DIR="$BUILD_DIR/$APP_NAME"
 
 echo "创建 App Bundle 结构..."

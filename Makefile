@@ -19,7 +19,7 @@ DOTNET_FRAMEWORK := net10.0
 
 # Project Paths
 SRC_DIR := src
-CORE_PROJECT := $(SRC_DIR)/ImeWlConverterCore/ImeWlConverterCore.csproj
+CORE_PROJECT := $(SRC_DIR)/ImeWlConverter.Core/ImeWlConverter.Core.csproj
 CMD_PROJECT := $(SRC_DIR)/ImeWlConverterCmd/ImeWlConverterCmd.csproj
 MAC_PROJECT := $(SRC_DIR)/ImeWlConverterMac/ImeWlConverterMac.csproj
 WIN_PROJECT := $(SRC_DIR)/IME WL Converter Win/IME WL Converter Win.csproj
@@ -459,7 +459,7 @@ lint: check-deps
 version: check-deps
 	@echo "$(COLOR_CYAN)$(EMOJI_INFO) Version Information:$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)Project Version:$(COLOR_RESET)"
-	@cd $(SRC_DIR)/ImeWlConverterCore && $(DOTNET) msbuild -getProperty:Version -nologo 2>/dev/null || echo "  Unknown (MinVer requires Git tags)"
+	@cd $(SRC_DIR)/ImeWlConverter.Core && $(DOTNET) msbuild -getProperty:Version -nologo 2>/dev/null || echo "  Unknown (MinVer requires Git tags)"
 	@echo ""
 	@echo "$(COLOR_YELLOW).NET SDK:$(COLOR_RESET) $$($(DOTNET) --version)"
 	@echo "$(COLOR_YELLOW)Target Framework:$(COLOR_RESET) $(DOTNET_FRAMEWORK)"

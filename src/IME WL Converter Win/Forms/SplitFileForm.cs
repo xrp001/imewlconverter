@@ -19,7 +19,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Studyzy.IMEWLConverter.Helpers;
+using ImeWlConverter.Core.Helpers;
 
 namespace Studyzy.IMEWLConverter;
 

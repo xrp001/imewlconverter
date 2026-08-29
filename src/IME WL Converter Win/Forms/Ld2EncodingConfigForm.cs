@@ -23,12 +23,11 @@ namespace Studyzy.IMEWLConverter;
 
 public partial class Ld2EncodingConfigForm : Form
 {
-    private static Encoding selectedEncoding;
+    private static Encoding selectedEncoding = Encoding.UTF8;
 
     public Ld2EncodingConfigForm()
     {
         InitializeComponent();
-        if (selectedEncoding == null) selectedEncoding = Encoding.UTF8;
     }
 
     public Encoding SelectedEncoding => cbxEncoding.SelectedEncoding;

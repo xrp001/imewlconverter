@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,42 +16,39 @@
  */
 
 using System;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.IME;
+using System.IO;
+using System.Text;
+using Xunit;
+using ImeWlConverter.Formats.GooglePinyin;
 
 namespace Studyzy.IMEWLConverter.Test;
 
-[TestFixture]
-internal class GooglePinyinTest : BaseTest
+public class GooglePinyinTest : BaseTest
 {
-    [OneTimeSetUp]
-    public override void InitData()
+    public GooglePinyinTest()
     {
-        exporter = new GooglePinyin();
-        importer = new GooglePinyin();
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        exporter = new GooglePinyinExporter();
+        importer = new GooglePinyinImporter();
     }
 
     protected override string StringData => Resource4Test.GooglePinyin;
 
-    [Test]
+    [Fact]
     public void TestExport()
     {
-        var txt = exporter.Export(WlListData)[0];
-        Assert.That(txt.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Length == 2, Is.True);
+        using var ms = new MemoryStream();
+        var result = ExportToStream(WlListData, ms);
+        Assert.Equal(2, result.EntryCount);
     }
 
-    [Test]
-    public void TestExportLine()
-    {
-        var txt = exporter.ExportLine(WlData);
-        Assert.That("深蓝测试\t10\tshen lan ce shi", Is.EqualTo(txt));
-    }
-
-    [Test]
+    [Fact]
     public void TestImport()
     {
-        var list = ((IWordLibraryTextImport)importer).ImportText(StringData);
-        Assert.That(list, Is.Not.Null);
-        Assert.That(10, Is.EqualTo(list.Count));
+        var bytes = Encoding.GetEncoding("GBK").GetBytes(StringData);
+        using var ms = new MemoryStream(bytes);
+        var result = importer!.ImportAsync(ms).GetAwaiter().GetResult();
+        Assert.NotNull(result.Entries);
+        Assert.Equal(10, result.Entries.Count);
     }
 }

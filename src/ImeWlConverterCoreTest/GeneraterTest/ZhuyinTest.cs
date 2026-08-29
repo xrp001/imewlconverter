@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,35 +15,35 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Linq;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Generaters;
+using Xunit;
+using ImeWlConverter.Abstractions.Contracts;
+using ImeWlConverter.Core.CodeGeneration.Generators;
 
 namespace Studyzy.IMEWLConverter.Test.GeneraterTest;
 
-[TestFixture]
-internal class ZhuyinTest
+public class ZhuyinTest
 {
-    [OneTimeSetUp]
-    public void SetUp()
+    private readonly ICodeGenerator generator;
+
+    public ZhuyinTest()
     {
-        generater = new ZhuyinGenerater();
+        generator = new ZhuyinCodeGenerator();
     }
 
-    private IWordCodeGenerater generater;
-
-    [Test]
+    [Fact]
     public void TestGetOneWordPinyin()
     {
     }
 
-    [TestCase("曾毅", "ㄗㄥ,ㄧˋ")]
-    [TestCase("北京吃饭", "ㄅㄟˇ,ㄐㄧㄥ,ㄔ,ㄈㄢˋ")]
-    [TestCase("煤矿", "ㄇㄟˊ,ㄎㄨㄤˋ")]
-    [TestCase("故乡", "ㄍㄨˋ,ㄒㄧㄤ")]
+    [Theory]
+    [InlineData("曾毅", "ㄗㄥ,ㄧˋ")]
+    [InlineData("北京吃饭", "ㄅㄟˇ,ㄐㄧㄥ,ㄔ,ㄈㄢˋ")]
+    [InlineData("煤矿", "ㄇㄟˊ,ㄎㄨㄤˋ")]
+    [InlineData("故乡", "ㄍㄨˋ,ㄒㄧㄤ")]
     public void TestGetLongWordsPinyin(string str, string py)
     {
-        var result = generater.GetCodeOfString(str).ToCodeString(",");
-        Assert.That(result.ToArray(), Does.Contain(py));
+        var result = generator.GenerateCode(str);
+        var primaryCode = result.GetPrimaryCode(",");
+        Assert.Equal(py, primaryCode);
     }
 }

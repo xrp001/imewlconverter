@@ -51,7 +51,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../ImeWlConverterCore/ImeWlConverterCore.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ImeWlConverter.Core/ImeWlConverter.Core.csproj" />
+    <ProjectReference Include="../ImeWlConverter.Abstractions/ImeWlConverter.Abstractions.csproj" />
+    <ProjectReference Include="../ImeWlConverter.Formats/ImeWlConverter.Formats.csproj" />
   </ItemGroup>
 
   <ItemGroup>

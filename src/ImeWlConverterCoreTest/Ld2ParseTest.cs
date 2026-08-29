@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,34 +16,26 @@
  */
 
 using System;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Formats.LingoesLd2;
 
 namespace Studyzy.IMEWLConverter.Test;
 
-[TestFixture]
-internal class Ld2ParseTest : BaseTest
+public class Ld2ParseTest : BaseTest
 {
-    [OneTimeSetUp]
-    public override void InitData()
+    public Ld2ParseTest()
     {
-        importer = new LingoesLd2();
+        importer = new LingoesLd2Importer();
     }
 
-    [TestCase("g.ld2")]
-    [TestCase("i.ld2")]
+    [Theory]
+    [InlineData("g.ld2")]
+    [InlineData("i.ld2")]
     public void TestParseLd2(string file)
     {
-        var ld2File = GetFullPath(file);
-
-        var reult = importer.Import(GetFullPath(ld2File));
-
-        Assert.That(reult, Is.Not.Null);
-        Assert.That(reult.Count, Is.GreaterThan(0));
-        //foreach (WordLibrary wordLibrary in reult)
-        //{
-        //    Debug.WriteLine(wordLibrary);
-        //}
+        var result = ImportFromFile(GetFullPath(file));
+        Assert.NotNull(result.Entries);
+        Assert.True(result.Entries.Count > 0);
     }
 
     protected override string StringData => throw new NotImplementedException();

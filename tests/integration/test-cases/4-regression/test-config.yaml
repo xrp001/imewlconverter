@@ -1,0 +1,88 @@
+suite_name: 4-regression
+description: 回归测试 - 验证 Issue #395 修复（确保五笔等非拼音格式在 CLI 中可用）
+enabled: true
+
+test_cases:
+- name: R01-纯词语到五笔98
+  description: "Issue #395 核心场景: 纯汉字词语转换为五笔98编码"
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/word-list.txt
+    format: word
+    encoding: UTF-8
+  output:
+    format: wb98
+    expected: expected/r01-word-to-wb98.expected
+    encoding: UTF-16LE
+  tags:
+  - regression
+  - wubi
+  - issue-395
+  stats:
+    words: 5
+    source: "纯汉字词语列表"
+
+- name: R02-纯词语到五笔86
+  description: "验证五笔86编码输出格式"
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/word-list.txt
+    format: word
+    encoding: UTF-8
+  output:
+    format: wb86
+    expected: expected/r02-word-to-wb86.expected
+    encoding: UTF-16LE
+  tags:
+  - regression
+  - wubi
+  - issue-395
+  stats:
+    words: 5
+    source: "纯汉字词语列表"
+
+- name: R03-纯词语到极点五笔
+  description: "验证极点五笔编码输出格式"
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/word-list.txt
+    format: word
+    encoding: UTF-8
+  output:
+    format: jd
+    expected: expected/r03-word-to-jd.expected
+    encoding: UTF-16LE
+  tags:
+  - regression
+  - wubi
+  - issue-395
+  stats:
+    words: 5
+    source: "纯汉字词语列表"
+
+- name: R04-纯词语到五笔新世纪
+  description: "验证五笔新世纪版编码输出格式"
+  enabled: true
+  timeout: 15
+  expect_failure: false
+  input:
+    file: source/word-list.txt
+    format: word
+    encoding: UTF-8
+  output:
+    format: wbnewage
+    expected: expected/r04-word-to-wbnewage.expected
+    encoding: UTF-16LE
+  tags:
+  - regression
+  - wubi
+  - issue-395
+  stats:
+    words: 5
+    source: "纯汉字词语列表"

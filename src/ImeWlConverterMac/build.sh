@@ -52,9 +52,12 @@ echo "🔗 创建发布目录结构..."
 mkdir -p dist/intel
 mkdir -p dist/apple-silicon
 
+# 从 csproj 中读取 TargetFramework
+TFM=$(grep '<TargetFramework>' ImeWlConverterMac.csproj | sed 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/')
+
 # 复制发布文件
-cp -r bin/Release/net6.0/osx-x64/publish/* dist/intel/
-cp -r bin/Release/net6.0/osx-arm64/publish/* dist/apple-silicon/
+cp -r bin/Release/${TFM}/osx-x64/publish/* dist/intel/
+cp -r bin/Release/${TFM}/osx-arm64/publish/* dist/apple-silicon/
 
 echo "✅ 构建完成！"
 echo ""

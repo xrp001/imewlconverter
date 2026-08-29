@@ -3,9 +3,11 @@
         <!-- 移除Windows SDK依赖，仅使用基础Windows桌面支持 -->
         <TargetFramework>net10.0-windows</TargetFramework>
         <OutputType>WinExe</OutputType>
+        <Nullable>enable</Nullable>
         <RootNamespace>Studyzy.IMEWLConverter</RootNamespace>
         <AssemblyName>深蓝词库转换</AssemblyName>
         <ApplicationIcon>app.ico</ApplicationIcon>
+        <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
         
         <!-- 禁用Windows SDK引用 -->
         <EnableWindowsTargeting>false</EnableWindowsTargeting>
@@ -30,11 +32,14 @@
         <ApplicationVersion>3.3.1.%2a</ApplicationVersion>
         <UseApplicationTrust>false</UseApplicationTrust>
         <PublishWizardCompleted>true</PublishWizardCompleted>
-        <BootstrapperEnabled>true</BootstrapperEnabled>
+        <BootstrapperEnabled>false</BootstrapperEnabled>
         <NoStdLib>False</NoStdLib>
         <UseWindowsForms>true</UseWindowsForms>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
         <Platforms>AnyCPU;x86</Platforms>
+
+        <!-- 允许引用 ImeWlConverterCmd.exe（NETSDK1151 规避，必须放消费方） -->
+        <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     </PropertyGroup>
     <PropertyGroup>
         <ManifestCertificateThumbprint>D023E0A7D1F29511E571C5D888823CF5150F5061</ManifestCertificateThumbprint>
@@ -43,7 +48,7 @@
         <ManifestKeyFile>IME WL Converter_TemporaryKey.pfx</ManifestKeyFile>
     </PropertyGroup>
     <PropertyGroup>
-        <GenerateManifests>true</GenerateManifests>
+        <GenerateManifests>false</GenerateManifests>
     </PropertyGroup>
     <PropertyGroup>
         <SignManifests>false</SignManifests>
@@ -94,18 +99,14 @@ GitHub: https://github.com/studyzy/imewlconverter</Description>
         <!-- Release发布优化配置 -->
         <DebugType>none</DebugType>
         <DebugSymbols>false</DebugSymbols>
-        
+
         <!-- 禁用代码裁剪 (Windows Forms不支持trimming) -->
         <PublishTrimmed>false</PublishTrimmed>
-        
-        <!-- 单文件发布 -->
+
+        <!-- 单文件发布（兼容 self-contained 与 framework-dependent） -->
         <PublishSingleFile>true</PublishSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-        
-        <!-- 启用ReadyToRun优化 -->
-        <PublishReadyToRun>true</PublishReadyToRun>
-        
+
         <!-- 不包含PDB文件 -->
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     </PropertyGroup>
@@ -113,24 +114,26 @@ GitHub: https://github.com/studyzy/imewlconverter</Description>
         <!-- Release发布优化配置 -->
         <DebugType>none</DebugType>
         <DebugSymbols>false</DebugSymbols>
-        
+
         <!-- 禁用代码裁剪 (Windows Forms不支持trimming) -->
         <PublishTrimmed>false</PublishTrimmed>
-        
-        <!-- 单文件发布 -->
+
+        <!-- 单文件发布（兼容 self-contained 与 framework-dependent） -->
         <PublishSingleFile>true</PublishSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-        
-        <!-- 启用ReadyToRun优化 -->
-        <PublishReadyToRun>true</PublishReadyToRun>
-        
+
         <!-- 不包含PDB文件 -->
         <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     </PropertyGroup>
+
+    <!-- 仅在 self-contained 发布时启用 ReadyToRun 与单文件压缩（framework-dependent 不支持） -->
+    <PropertyGroup Condition="'$(Configuration)'=='Release' and '$(SelfContained)'=='true'">
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+        <PublishReadyToRun>true</PublishReadyToRun>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Office.Interop.Word" Version="15.0.4797.1004" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
     </ItemGroup>
     <ItemGroup>
         <Compile Update="EncodingComboBox.cs">
@@ -142,7 +145,9 @@ GitHub: https://github.com/studyzy/imewlconverter</Description>
         <Content Include="ThirdPart\Microsoft.Office.Interop.Word.dll"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\ImeWlConverterCore\ImeWlConverterCore.csproj"/>
+        <ProjectReference Include="..\ImeWlConverter.Abstractions\ImeWlConverter.Abstractions.csproj"/>
+        <ProjectReference Include="..\ImeWlConverter.Core\ImeWlConverter.Core.csproj"/>
+        <ProjectReference Include="..\ImeWlConverter.Formats\ImeWlConverter.Formats.csproj"/>
         <ProjectReference Include="..\ImeWlConverterCmd\ImeWlConverterCmd.csproj"/>
     </ItemGroup>
     <ItemGroup>
@@ -152,8 +157,6 @@ GitHub: https://github.com/studyzy/imewlconverter</Description>
         <Compile Remove="Forms\SelfDefiningConfigFormImport.cs"/>
         <Compile Remove="Language\MsVbComponent.cs"/>
         <Compile Remove="Resource1.Designer.cs"/>
-        <Compile Remove="WPF\App.xaml.cs"/>
-        <Compile Remove="WPF\MainWindow.xaml.cs"/>
         <EmbeddedResource Remove="Forms\CreatePinyinWLForm.resx"/>
         <EmbeddedResource Remove="Forms\SelfDefiningConfigFormExport.resx"/>
         <EmbeddedResource Remove="Forms\SelfDefiningConfigFormImport.resx"/>
